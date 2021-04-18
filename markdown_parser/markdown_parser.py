@@ -50,6 +50,9 @@ class MarkdownParser:
         self.list_depth = 0
 
     def parse(self, markdown):
+        self.current_line = ''
+        self.output = []
+
         for line in markdown.split('\n'):
             self.parse_line(line)
         self.reset_element_trace()
@@ -75,11 +78,10 @@ class MarkdownParser:
         elif self.line_is('ol', line):
             self.use_list('ol', line)
         else:
-            self.use_paragraph(self.parse_inline(line))
+            self.use_paragraph(line)
 
     def parse_inline(self, line: str):
         i = 0
-        parsed_line = ''
 
         while i < len(line):
             if self.line_is('strong', line[i:]):
@@ -92,13 +94,11 @@ class MarkdownParser:
             elif self.line_is('link', line[i:]):
                 link = self.get_link(line[i:])
                 self.use_link(link)
-                i += len(link)  # go to end of link inline
+                i += len(link) - 1  # go to end of link inline
             else:
-                parsed_line += line[i]
+                self.current_line += line[i]
 
             i += 1
-
-        return parsed_line
 
     def line_is(self, element: str, line: str):
         return self.elements[element]['re'].search(line)
@@ -114,7 +114,7 @@ class MarkdownParser:
         self.parse_inline(text)
 
         # Close tag
-        self.use_el(header)
+        self.use_el(header_tag)
 
     def get_header_depth(self, header: str):
         # find how many hashes there are
@@ -127,7 +127,7 @@ class MarkdownParser:
         alt, src = image.split('](')
 
         # Self closing tag
-        self.use_el('img', {'src': src, 'alt': alt}, True)
+        self.use_el('img', {'src': src, 'alt': alt, 'title': alt}, True)
 
     def get_link(self, line: str) -> str:
         return self.elements['link']['re'].search(line).group()
@@ -137,7 +137,7 @@ class MarkdownParser:
         text, href = link.split('](')
 
         # Open tag
-        self.use_el('a', {'href': href, '_content': self.parse_inline(text)})
+        self.use_el('a', {'href': href, '_content': text})
 
     def use_code_block(self, code_block: str):
         if self.element_trace[-1] != 'pre':
@@ -180,13 +180,13 @@ class MarkdownParser:
             self.current_line = self.open_el('p')
         else:
             self.use_el('br', None, True)
-        self.current_line += text
+        self.parse_inline(text)
 
     def use_el(self, element: str, options: dict = None, self_closing=False):
         if options is not None and options.get('_content'):
             options_no_content = {k: options[k] for k in options if k != '_content'}
             self.current_line += self.open_el(element, options_no_content)
-            self.current_line += self.parse_inline(options['_content'])
+            self.parse_inline(options['_content'])
             self.current_line += self.close_el(element)
             return
 

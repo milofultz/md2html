@@ -28,40 +28,51 @@ class TestMarkdownParserWhitespace(unittest.TestCase):
             Test''')))
 
 
-# class TestMarkdownParserSingleLines(unittest.TestCase):
-#     def setUp(self):
-#         self.md_parser = MarkdownParser()
+class TestMarkdownParserSingleLines(unittest.TestCase):
+    def setUp(self):
+        self.md_parser = MarkdownParser()
 
-#     def test_header(self):
-#         self.assertEqual(self.md_parser.parse_line('# Hello there!'), '<h1>Hello there!</h1>')
-#         self.assertEqual(self.md_parser.parse_line('###### Tiny header'), '<h6>Tiny header</h6>')
-#         self.assertEqual(self.md_parser.parse_line('###Smush'), '<h3>Smush</h3>')
-#         self.assertNotEqual(self.md_parser.parse_line('Sm # ush'), 'Sm <h1>ush</h1>')
+    def test_header(self):
+        self.assertEqual('<h6>Tiny header</h6>', self.md_parser.parse('###### Tiny header'))
 
-#     def test_bold(self):
-#         self.assertEqual(self.md_parser.parse_line('**The whole line**'), '<p><strong>The whole line</strong></p>')
-#         self.assertEqual(self.md_parser.parse_line('Somewhere in the **middle** of the line'), 
-#                 '<p>Somewhere in the <strong>middle</strong> of the line</p>')
+    def test_header_no_spaces(self):
+        self.assertEqual('<h3>Slush</h3>', self.md_parser.parse('###Slush'))
 
-#     def test_italic(self):
-#         self.assertEqual(self.md_parser.parse_line('*The whole line*'), '<p><em>The whole line</em></p>')
-#         self.assertEqual(self.md_parser.parse_line('Somewhere in the *middle* of the line'), 
-#                 '<p>Somewhere in the <em>middle</em> of the line</p>')
+    def test_hash_not_at_start(self):
+        self.assertNotEqual('Sm <h1>ush</h1>', self.md_parser.parse('Sm # ush'))
 
-#     def test_code(self):
-#         self.assertEqual(self.md_parser.parse_line('`The whole line`'), '<p><code>The whole line</code></p>')
-#         self.assertEqual(self.md_parser.parse_line('Somewhere in the `middle` of the line'), 
-#                 '<p>Somewhere in the <code>middle</code> of the line</p>')
+    def test_bold(self):
+        self.assertEqual('<p><strong>The whole line</strong></p>', self.md_parser.parse('**The whole line**'))
 
-#     def test_link(self):
-#         self.assertEqual(self.md_parser.parse_line('[The whole line](example.com)'), '<p><a href="example.com">The whole line</a></p>')
-#         self.assertEqual(self.md_parser.parse_line('Somewhere in the [middle](http://www.example.com) of the line'), 
-#             '<p>Somewhere in the <a href="http://www.example.com">middle</a> of the line</p>')
+    def test_bold_inline(self):
+        self.assertEqual('<p>Somewhere in the <strong>middle</strong> of the line</p>', self.md_parser.parse('Somewhere in the **middle** of the line'))
 
-#     def test_image(self):
-#         # Won't do inline images, only as whole line
-#         self.assertEqual(self.md_parser.parse_line('[!The whole line](https://duckduckgo.com/assets/logo_homepage.alt.v108.svg)'), 
-#             '<img src="https://duckduckgo.com/assets/logo_homepage.alt.v108.svg" alt="The whole line" title="The whole line" />')
+    def test_italic(self):
+        self.assertEqual('<p><em>The whole line</em></p>', self.md_parser.parse('*The whole line*'))
+
+    def test_italic_inline(self):
+        self.assertEqual('<p>Somewhere in the <em>middle</em> of the line</p>',
+                         self.md_parser.parse('Somewhere in the *middle* of the line'))
+
+    def test_code(self):
+        self.assertEqual('<p><code>The whole line</code></p>', self.md_parser.parse('`The whole line`'))
+
+    def test_code_inline(self):
+        self.assertEqual('<p>Somewhere in the <code>middle</code> of the line</p>',
+                         self.md_parser.parse('Somewhere in the `middle` of the line'))
+
+    def test_link(self):
+        self.assertEqual('<p><a href="example.com">The whole line</a></p>',
+                         self.md_parser.parse('[The whole line](example.com)'))
+
+    def test_link_inline(self):
+        self.assertEqual('<p>Somewhere in the <a href="http://www.example.com">middle</a> of the line</p>',
+                         self.md_parser.parse('Somewhere in the [middle](http://www.example.com) of the line'))
+
+    def test_image(self):
+        # Won't do inline images, only as whole line
+        self.assertEqual('<img src="https://duckduckgo.com/assets/logo_homepage.alt.v108.svg" alt="The whole line" title="The whole line" />',
+                         self.md_parser.parse('[!The whole line](https://duckduckgo.com/assets/logo_homepage.alt.v108.svg)'))
 
 
 # class TestMarkdownParserBlocks(unittest.TestCase):
