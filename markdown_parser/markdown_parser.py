@@ -16,12 +16,10 @@ class MarkdownParser:
         # Block
         'code_block':       { 're':     re.compile('^```\w*$'),
                               'tag':    'pre' },
-        'unordered_li':     { 're':     re.compile('^\s*\*'),
-                              'tag':    'li',
-                              'parent': 'ul' },
-        'ordered_li':       { 're':     re.compile('^\s*\d+\.'),
-                              'tag':    'li',
-                              'parent': 'ol' },
+        'ul':               { 're':     re.compile('^\s*\*\s'),
+                              'tag':    'ul'},
+        'ol':               { 're':     re.compile('^\s*\d+\.\s'),
+                              'tag':    'ol'},
         # Inline
         'strong':           { 're':     re.compile('^\*\*'),
                               'tag':    'strong' },
@@ -41,23 +39,23 @@ class MarkdownParser:
                               'header': 'th' },
     }
 
-    list_indentation = 2
-
     def __init__(self):
         # all elements should be nested within, not between
         self.element_trace = ['ROOT']
-        self.output = ''
-        self.keep_whitespace = False
-        self.current_indentation = 0
+        self.current_line = ''
+        self.output = []
+        self.pre = False
+        self.list_indent_interval = 2
+        self.list_depth = 0
 
     def parse(self, input):
         for line in input.split('\n'):
             self.parse_line(line)
-        return self.output
+        return '\n'.join(self.output)
 
     def parse_line(self, line):
         if self.element_trace[-1] == 'pre' and not self.line_is('code_block', line):
-            self.output += line + '\n'
+            self.current_line += line + '\n'
             return
 
         line = line.rstrip()
@@ -68,33 +66,37 @@ class MarkdownParser:
             self.use_image(line)
         elif self.line_is('code_block', line):
             self.use_code_block(line)
-        elif self.line_is('unordered_li', line):
-            pass
-        elif self.line_is('ordered_li', line):
-            pass
+        elif self.line_is('ul', line):
+            self.use_list('ul', line)
+        elif self.line_is('ol', line):
+            self.use_list('ol', line)
+        elif not line:
+            self.reset_element_trace()
         else:
-            self.parse_inline(line)
+            self.use_el('p', { '_content': self.parse_inline(line) })
 
     def parse_inline(self, line: str):
-        url = ''
         i = 0
+        parsed_line = ''
 
         while i < len(line):
             if self.line_is('strong', line[i:]):
-                self.use_element('strong')
+                self.use_el('strong')
                 i += 1  # **
             elif self.line_is('em', line[i:]):
-                self.use_element('em')
+                self.use_el('em')
             elif self.line_is('code', line[i:]):
-                self.use_element('code')
+                self.use_el('code')
             elif self.line_is('link', line[i:]):
                 link = self.get_link(line[i:])
                 self.use_link(link)
                 i += len(link)  # go to end of link inline
             else:
-                self.output += line[i]
+                parsed_line += line[i]
 
             i += 1
+
+        return parsed_line
 
     def line_is(self, element: str, line: str) -> bool:
         return self.elements[element]['re'].search(line)
@@ -103,16 +105,14 @@ class MarkdownParser:
         header_tag = self.get_header_depth(header)
 
         # Open tag
-        self.element_trace.append(header_tag)
-        self.open_el(header_tag)
+        self.use_el(header_tag)
 
         # Parse remaining text 
         text = re.split('^#+', header)[1].strip()
         self.parse_inline(text)
 
         # Close tag
-        self.element_trace.pop()
-        self.close_el(header)
+        self.use_el(header)
 
     def get_header_depth(self, header: str):
         # find how many hashes there are
@@ -125,7 +125,7 @@ class MarkdownParser:
         alt, src = image.split('](')
 
         # Self closing tag
-        self.open_el('img', {'src': src, 'alt': alt}, True)
+        self.use_el('img', {'src': src, 'alt': alt}, True)
 
     def get_link(self, line: str) -> str:
         return self.elements['link']['re'].search(line).group()
@@ -135,51 +135,77 @@ class MarkdownParser:
         text, href = link.split('](')
 
         # Open tag
-        self.element_trace.append('a')
-        self.open_el('a', {'href': href})
-
-        # Parse inner text
-        self.parse_inline(text)
-
-        # Close tag
-        self.element_trace.pop()
-        self.close_el('a')
+        self.use_el('a', {'href': href, '_content': self.parse_inline(text) })
 
     def use_code_block(self, code_block: str):
         if self.element_trace[-1] != 'pre':
-            self.keep_whitespace = True
+            self.pre = True
 
             # Open tag
-            self.element_trace.append('pre')
             lang = code_block[3:]
             if lang:
-                self.open_el('pre', {'data-code-lang': lang})
+                self.current_line += self.open_el('pre', {'data-code-lang': lang})
             else:
-                self.open_el('pre')
+                self.current_line += self.open_el('pre')
         else:
-            self.keep_whitespace = False
+            self.pre = False
 
             # Close tag
-            self.close_el('pre')
+            self.current_line += self.close_el('pre')
+            self.output.append(self.current_line)
 
-
-    def use_element(self, element: str):
-        if self.element_trace[-1] != element:
-            self.element_trace.append(element)
-            self.open_el(element)
+    def use_list(self, list_type: str, li: str):
+        # get leading white space
+        current_depth = (len(li) - len(li.lstrip())) // self.list_indent_interval
+        
+        if self.element_trace[-1] != list_type or current_depth > self.list_depth:
+            self.open_el(list_type)
+        elif current_depth < self.list_depth:
+            self.close_el(list_type)
+        # if leading whitespace matches current indentation
         else:
-            self.element_trace.pop()
-            self.close_el(element)
+            pass
 
-    def open_el(self, element: str, options: dict = None, closing: bool = False):
+        self.list_depth = current_depth
+
+        # get text content
+        text = self.elements[list_type]['re'].split(li.lstrip())[1]
+        # create li element with text content
+        self.use_el('li', { '_content': text })
+
+
+    def use_el(self, element: str, options: dict = None, self_closing=False):
+        if options.get('_content'):
+            options_no_content = { k:options[k] for k in options if k != '_content' }
+            html = self.open_el(element, options_no_content)
+            html += self.close_el(element)
+            self.output.append(html)
+            return
+
+        if self.element_trace[-1] != element:
+            html = self.open_el(element, options, self_closing)
+            self.output.append(html)
+        else:
+            html = self.close_el(element)
+            self.output.append(html)
+
+    def open_el(self, element: str, options: dict = None, self_closing=False):
+        self.element_trace.append(element)
         attributes = ''
         if options:
             for attr, value in options.items():
                 attributes += f' {attr}="{value}"'
         suffix = '>'
-        if closing:
-            closing = ' />'
-        self.output += '<' + element + attributes + suffix
+        if self_closing:
+            self_closing = ' />'
+        return '<' + element + attributes + suffix
 
     def close_el(self, element: str):
-        self.output += '</' + element + '>'
+        self.element_trace.pop()
+        return '</' + element + '>'
+
+    def reset_element_trace(self):
+        for element in reversed(self.element_trace):
+            if element == 'ROOT':
+                return    
+            self.use_el(element)
