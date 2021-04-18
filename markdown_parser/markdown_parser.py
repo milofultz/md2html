@@ -157,22 +157,36 @@ class MarkdownParser:
 
     def use_list(self, list_type: str, li: str):
         # get leading white space
-        current_depth = (len(li) - len(li.lstrip())) // self.list_indent_interval
-        
-        if self.element_trace[-1] != list_type or current_depth > self.list_depth:
-            self.current_line += self.open_el(list_type)
-        elif current_depth < self.list_depth:
-            self.current_line += self.close_el(list_type)
-        # if leading whitespace matches current indentation
-        else:
-            pass
+        current_indent = (len(li) - len(li.lstrip())) // self.list_indent_interval
 
-        self.list_depth = current_depth
+        if current_indent > self.list_depth:
+            first = True
+            while current_indent > self.list_depth:
+                self.list_depth += 1
+                self.use_el(list_type)
+                if not first:
+                    self.use_el('li')
+        elif current_indent < self.list_depth:
+            first = True
+            while current_indent > self.list_depth:
+                if first:
+                    self.use_el('li')
+                    first = False
+                self.list_depth -= 1
+                self.use_el(list_type)
+                self.use_el('li')
+        elif self.element_trace[-1] not in [list_type, 'li']:
+            self.use_el(list_type)
+        else:
+            self.use_el('li')
+
+        self.list_depth = current_indent
 
         # get text content
         text = self.elements[list_type]['re'].split(li.lstrip())[1]
         # create li element with text content
-        self.use_el('li', {'_content': text})
+        self.use_el('li')
+        self.parse_inline(text)
 
     def use_paragraph(self, text: str):
         if self.element_trace[-1] != 'p':
