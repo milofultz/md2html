@@ -77,8 +77,7 @@ class TestMarkdownParser_Blocks(unittest.TestCase):
             into one chunk
             ```''')
         html_code = dedent('''\
-            <pre>
-            This is some code
+            <pre>This is some code
             that should be wrapped
             into one chunk
             </pre>''')

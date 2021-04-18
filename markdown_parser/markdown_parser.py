@@ -53,8 +53,13 @@ class MarkdownParser:
     def parse(self, input):
         for line in input.split('\n'):
             self.parse_line(line)
+        return self.output
 
     def parse_line(self, line):
+        if self.element_trace[-1] == 'pre' and not self.line_is('code_block', line):
+            self.output += line + '\n'
+            return
+
         line = line.rstrip()
 
         if self.line_is('header', line):
