@@ -1,42 +1,43 @@
 import re
 
-# I: markdown string (most of a file containing front matter and Jinja2 tamplates)
+# I: markdown string (most of a file containing front matter and Jinja2 templates)
 # O: HTML file
 # C: no inline HTML
 #    Only using headers, strong, em, links, images, lists, tables, code blocks, code inline
 # E: incomplete tag (e.g. **Hello!): throw error with line number and line contents
 #    incorrect formatting: throw error with line number and line contents
 
+
 class MarkdownParser:
     # create regex matches
     elements = {
         # Whole line
-        'header':           { 're':     re.compile('^#+'),
-                              'tag':    'h' },
+        'header':           {'re':     re.compile(r'^#+'),
+                             'tag':    'h'},
         # Block
-        'code_block':       { 're':     re.compile('^```\w*$'),
-                              'tag':    'pre' },
-        'ul':               { 're':     re.compile('^\s*\*\s'),
-                              'tag':    'ul'},
-        'ol':               { 're':     re.compile('^\s*\d+\.\s'),
-                              'tag':    'ol'},
+        'code_block':       {'re':     re.compile(r'^```\w*$'),
+                             'tag':    'pre'},
+        'ul':               {'re':     re.compile(r'^\s*\*\s'),
+                             'tag':    'ul'},
+        'ol':               {'re':     re.compile(r'^\s*\d+\.\s'),
+                             'tag':    'ol'},
         # Inline
-        'strong':           { 're':     re.compile('^\*\*'),
-                              'tag':    'strong' },
-        'em':               { 're':     re.compile('^\*(?!\*)'),
-                              'tag':    'em' },
-        'code':             { 're':     re.compile('^`(?!`)'),
-                              'tag':    'code' },          
-        'link':             { 're':     re.compile('^^\[[^\[\]]+\]\([^\(\)]+\)'),
-                              'tag':    'a' },
-        'image':            { 're':     re.compile('^\[![^\[\]]+\]\([^\(\)]+\)$'),
-                              'tag':    'img' },
+        'strong':           {'re':     re.compile(r'^\*\*'),
+                             'tag':    'strong'},
+        'em':               {'re':     re.compile(r'^\*(?!\*)'),
+                             'tag':    'em'},
+        'code':             {'re':     re.compile(r'^`(?!`)'),
+                             'tag':    'code'},
+        'link':             {'re':     re.compile(r'^\[[^\[\]]+]\([^()]+\)'),
+                             'tag':    'a'},
+        'image':            {'re':     re.compile(r'^\[![^\[\]]+]\([^()]+\)$'),
+                             'tag':    'img'},
         # Tables
-        'table_div':        { 're':     re.compile('^---(\s\|\s---)+$'),
-                              'tag':    'table' },
-        'table_row':        { 're':     re.compile('^[\w\s]+((\s\|\s)[^\|]+[^\s\|])+$'),
-                              'tag':    'tr',
-                              'header': 'th' },
+        'table_div':        {'re':     re.compile(r'^---(\s\|\s---)+$'),
+                             'tag':    'table'},
+        'table_row':        {'re':     re.compile(r'^[\w\s]+((\s\|\s)[^|]+[^\s|])+$'),
+                             'tag':    'tr',
+                             'header': 'th'},
     }
 
     def __init__(self):
@@ -48,8 +49,8 @@ class MarkdownParser:
         self.list_indent_interval = 2
         self.list_depth = 0
 
-    def parse(self, input):
-        for line in input.split('\n'):
+    def parse(self, markdown):
+        for line in markdown.split('\n'):
             self.parse_line(line)
         return '\n'.join(self.output)
 
@@ -60,7 +61,9 @@ class MarkdownParser:
 
         line = line.rstrip()
 
-        if self.line_is('header', line):
+        if not line:
+            self.reset_element_trace()
+        elif self.line_is('header', line):
             self.use_header(line)
         elif self.line_is('image', line):
             self.use_image(line)
@@ -70,8 +73,6 @@ class MarkdownParser:
             self.use_list('ul', line)
         elif self.line_is('ol', line):
             self.use_list('ol', line)
-        elif not line:
-            self.reset_element_trace()
         else:
             self.use_el('p', { '_content': self.parse_inline(line) })
 
@@ -98,7 +99,7 @@ class MarkdownParser:
 
         return parsed_line
 
-    def line_is(self, element: str, line: str) -> bool:
+    def line_is(self, element: str, line: str):
         return self.elements[element]['re'].search(line)
 
     def use_header(self, header: str):
@@ -135,7 +136,7 @@ class MarkdownParser:
         text, href = link.split('](')
 
         # Open tag
-        self.use_el('a', {'href': href, '_content': self.parse_inline(text) })
+        self.use_el('a', {'href': href, '_content': self.parse_inline(text)})
 
     def use_code_block(self, code_block: str):
         if self.element_trace[-1] != 'pre':
@@ -171,13 +172,13 @@ class MarkdownParser:
         # get text content
         text = self.elements[list_type]['re'].split(li.lstrip())[1]
         # create li element with text content
-        self.use_el('li', { '_content': text })
-
+        self.use_el('li', {'_content': text})
 
     def use_el(self, element: str, options: dict = None, self_closing=False):
         if options.get('_content'):
-            options_no_content = { k:options[k] for k in options if k != '_content' }
+            options_no_content = {k: options[k] for k in options if k != '_content'}
             html = self.open_el(element, options_no_content)
+            html += self.parse_inline(options['_content'])
             html += self.close_el(element)
             self.output.append(html)
             return
@@ -197,7 +198,7 @@ class MarkdownParser:
                 attributes += f' {attr}="{value}"'
         suffix = '>'
         if self_closing:
-            self_closing = ' />'
+            suffix = ' />'
         return '<' + element + attributes + suffix
 
     def close_el(self, element: str):
