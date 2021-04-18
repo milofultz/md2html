@@ -52,6 +52,7 @@ class MarkdownParser:
     def parse(self, markdown):
         for line in markdown.split('\n'):
             self.parse_line(line)
+        self.reset_element_trace()
         return '\n'.join(self.output)
 
     def parse_line(self, line):
@@ -74,7 +75,7 @@ class MarkdownParser:
         elif self.line_is('ol', line):
             self.use_list('ol', line)
         else:
-            self.use_el('p', { '_content': self.parse_inline(line) })
+            self.use_paragraph(self.parse_inline(line))
 
     def parse_inline(self, line: str):
         i = 0
@@ -174,21 +175,25 @@ class MarkdownParser:
         # create li element with text content
         self.use_el('li', {'_content': text})
 
+    def use_paragraph(self, text: str):
+        if self.element_trace[-1] != 'p':
+            self.current_line = self.open_el('p')
+        else:
+            self.use_el('br', None, True)
+        self.current_line += text
+
     def use_el(self, element: str, options: dict = None, self_closing=False):
-        if options.get('_content'):
+        if options is not None and options.get('_content'):
             options_no_content = {k: options[k] for k in options if k != '_content'}
-            html = self.open_el(element, options_no_content)
-            html += self.parse_inline(options['_content'])
-            html += self.close_el(element)
-            self.output.append(html)
+            self.current_line += self.open_el(element, options_no_content)
+            self.current_line += self.parse_inline(options['_content'])
+            self.current_line += self.close_el(element)
             return
 
         if self.element_trace[-1] != element:
-            html = self.open_el(element, options, self_closing)
-            self.output.append(html)
+            self.current_line += self.open_el(element, options, self_closing)
         else:
-            html = self.close_el(element)
-            self.output.append(html)
+            self.current_line += self.close_el(element)
 
     def open_el(self, element: str, options: dict = None, self_closing=False):
         self.element_trace.append(element)
@@ -199,6 +204,7 @@ class MarkdownParser:
         suffix = '>'
         if self_closing:
             suffix = ' />'
+            self.element_trace.pop()
         return '<' + element + attributes + suffix
 
     def close_el(self, element: str):
@@ -208,5 +214,6 @@ class MarkdownParser:
     def reset_element_trace(self):
         for element in reversed(self.element_trace):
             if element == 'ROOT':
-                return    
+                break
             self.use_el(element)
+        self.output.append(self.current_line)

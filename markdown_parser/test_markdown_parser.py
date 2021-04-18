@@ -11,7 +11,7 @@ class TestMarkdownParserWhitespace(unittest.TestCase):
         self.md_parser = MarkdownParser()
 
     def test_adjacent_lines(self):
-        self.assertEqual('<p>Hello<br>World<br>Test</p>', self.md_parser.parse(dedent('''\
+        self.assertEqual('<p>Hello<br />World<br />Test</p>', self.md_parser.parse(dedent('''\
             Hello
             World
             Test''')))
