@@ -87,6 +87,21 @@ class TestMarkdownParser_Blocks(unittest.TestCase):
         # Unordered List
 
         md_code_ul_asterisk = dedent('''\
+            * List
+            * Item
+            ''')
+        md_code_ul_hyphen = md_code_ul_asterisk.replace('*', '-')
+
+        html_code_ul = dedent('''\
+            <ul>
+              <li>List</li>
+              <li>Item</li>
+            </ul>''')
+
+        self.assertEqual(self.md_parser.parse(md_code_ul_asterisk), html_code_ul)
+        self.assertEqual(self.md_parser.parse(md_code_ul_hyphen), html_code_ul)
+
+        md_code_ul_asterisk = dedent('''\
             * some
             * stuff with
             * lots of 
@@ -115,6 +130,19 @@ class TestMarkdownParser_Blocks(unittest.TestCase):
         self.assertEqual(self.md_parser.parse(md_code_ul_hyphen), html_code_ul)
 
         # Ordered List
+
+        md_code_ol_asterisk = dedent('''\
+            1. List
+            2. Item
+            ''')
+        md_code_ol_hyphen = md_code_ol_asterisk.replace('*', '-')
+        html_code_ol = dedent('''\
+            <ol>
+              <li>List</li>
+              <li>Item</li>
+            </ol>''')
+        self.assertEqual(self.md_parser.parse(md_code_ol_asterisk), html_code_ol)
+        self.assertEqual(self.md_parser.parse(md_code_ol_hyphen), html_code_ol)
 
         md_code_ol_asterisk = dedent('''\
             1. some
