@@ -75,144 +75,160 @@ class TestMarkdownParserSingleLines(unittest.TestCase):
                          self.md_parser.parse('[!The whole line](https://duckduckgo.com/assets/logo_homepage.alt.v108.svg)'))
 
 
-# class TestMarkdownParserBlocks(unittest.TestCase):
-#     def setUp(self):
-#         self.md_parser = MarkdownParser()
+class TestMarkdownParserBlocks(unittest.TestCase):
+    def setUp(self):
+        self.md_parser = MarkdownParser()
 
-#     def test_code_block(self):
-#         md_code = dedent('''\
-#             ```
-#             This is some code
-#             that should be wrapped
-#             into one chunk
-#             ```''')
-#         html_code = dedent('''\
-#             <pre>This is some code
-#             that should be wrapped
-#             into one chunk
-#             </pre>''')
-#         self.assertEqual(self.md_parser.parse(md_code), html_code)
+    def test_code_block(self):
+        md_code = dedent('''\
+            ```
+            This is some code
+            that should be wrapped
+            into one chunk
+            ```''')
+        html_code = dedent('''\
+            <pre>This is some code
+            that should be wrapped
+            into one chunk
+            </pre>''')
+        self.assertEqual(html_code, self.md_parser.parse(md_code))
 
-#     def test_list(self):
-#         # Unordered List
+    def test_code_block_indents(self):
+        md_code = dedent('''\
+            ```
+            This
+              should indent
+                    however we want it to
+             a
+            ```''')
+        html_code = dedent('''\
+            <pre>This
+              should indent
+                    however we want it to
+             a
+            </pre>''')
+        self.assertEqual(html_code, self.md_parser.parse(md_code))
 
-#         md_code_ul_asterisk = dedent('''\
-#             * List
-#             * Item
-#             ''')
-#         md_code_ul_hyphen = md_code_ul_asterisk.replace('*', '-')
-
-#         html_code_ul = dedent('''\
-#             <ul>
-#               <li>List</li>
-#               <li>Item</li>
-#             </ul>''')
-
-#         self.assertEqual(self.md_parser.parse(md_code_ul_asterisk), html_code_ul)
-#         self.assertEqual(self.md_parser.parse(md_code_ul_hyphen), html_code_ul)
-
-#         md_code_ul_asterisk = dedent('''\
-#             * some
-#             * stuff with
-#             * lots of 
-#                 * c 
-#                 * h 
-#                 * a 
-#                 * r 
-#                 * s
-#             ''')
-#         md_code_ul_hyphen = md_code_ul_asterisk.replace('*', '-')
-#         html_code_ul = dedent('''\
-#             <ul>
-#               <li>some</li>
-#               <li>stuff with</li>
-#               <li>lots of 
-#                 <ul>
-#                   <li>c</li>
-#                   <li>h</li>
-#                   <li>a</li>
-#                   <li>r</li>
-#                   <li>s</li>
-#                 </ul>
-#               </li>
-#             </ul>''')
-#         self.assertEqual(self.md_parser.parse(md_code_ul_asterisk), html_code_ul)
-#         self.assertEqual(self.md_parser.parse(md_code_ul_hyphen), html_code_ul)
-
-#         # Ordered List
-
-#         md_code_ol_asterisk = dedent('''\
-#             1. List
-#             2. Item
-#             ''')
-#         md_code_ol_hyphen = md_code_ol_asterisk.replace('*', '-')
-#         html_code_ol = dedent('''\
-#             <ol>
-#               <li>List</li>
-#               <li>Item</li>
-#             </ol>''')
-#         self.assertEqual(self.md_parser.parse(md_code_ol_asterisk), html_code_ol)
-#         self.assertEqual(self.md_parser.parse(md_code_ol_hyphen), html_code_ol)
-
-#         md_code_ol_asterisk = dedent('''\
-#             1. some
-#             2. stuff with
-#             3. lots of 
-#                 1. c 
-#                 1. h 
-#                 1. a 
-#                 1. r 
-#                 1. s
-#             ''')
-#         md_code_ol_hyphen = md_code_ol_asterisk.replace('*', '-')
-#         html_code_ol = dedent('''\
-#             <ol>
-#               <li>some</li>
-#               <li>stuff with</li>
-#               <li>lots of 
-#                 <ol>
-#                   <li>c</li>
-#                   <li>h</li>
-#                   <li>a</li>
-#                   <li>r</li>
-#                   <li>s</li>
-#                 </ol>
-#               </li>
-#             </ol>''')
-#         self.assertEqual(self.md_parser.parse(md_code_ol_asterisk), html_code_ol)
-#         self.assertEqual(self.md_parser.parse(md_code_ol_hyphen), html_code_ol)
-
-#         # Mixed Lists
-
-#         md_code_mixed_asterisk = dedent('''\
-#             1. some
-#             2. stuff with
-#             3. lots of 
-#                 * c 
-#                 * h 
-#                 * a 
-#                 * r 
-#                 * s
-#             4. number continuation
-#             ''')
-#         md_code_mixed_hyphen = md_code_mixed_asterisk.replace('*', '-')
-#         html_code_mixed = dedent('''\
-#             <ol>
-#               <li>some</li>
-#               <li>stuff with</li>
-#               <li>lots of 
-#                 <ul>
-#                   <li>c</li>
-#                   <li>h</li>
-#                   <li>a</li>
-#                   <li>r</li>
-#                   <li>s</li>
-#                 </ul>
-#               </li>
-#               <li>number continuation</li>
-#             </ol>''')
-#         self.assertEqual(self.md_parser.parse(md_code_mixed_asterisk), html_code_mixed)
-#         self.assertEqual(self.md_parser.parse(md_code_mixed_hyphen), html_code_mixed)
+    # def test_list(self):
+    #     # Unordered List
+    #
+    #     md_code_ul_asterisk = dedent('''\
+    #         * List
+    #         * Item
+    #         ''')
+    #     md_code_ul_hyphen = md_code_ul_asterisk.replace('*', '-')
+    #
+    #     html_code_ul = dedent('''\
+    #         <ul>
+    #           <li>List</li>
+    #           <li>Item</li>
+    #         </ul>''')
+    #
+    #     self.assertEqual(self.md_parser.parse(md_code_ul_asterisk), html_code_ul)
+    #     self.assertEqual(self.md_parser.parse(md_code_ul_hyphen), html_code_ul)
+    #
+    #     md_code_ul_asterisk = dedent('''\
+    #         * some
+    #         * stuff with
+    #         * lots of
+    #             * c
+    #             * h
+    #             * a
+    #             * r
+    #             * s
+    #         ''')
+    #     md_code_ul_hyphen = md_code_ul_asterisk.replace('*', '-')
+    #     html_code_ul = dedent('''\
+    #         <ul>
+    #           <li>some</li>
+    #           <li>stuff with</li>
+    #           <li>lots of
+    #             <ul>
+    #               <li>c</li>
+    #               <li>h</li>
+    #               <li>a</li>
+    #               <li>r</li>
+    #               <li>s</li>
+    #             </ul>
+    #           </li>
+    #         </ul>''')
+    #     self.assertEqual(self.md_parser.parse(md_code_ul_asterisk), html_code_ul)
+    #     self.assertEqual(self.md_parser.parse(md_code_ul_hyphen), html_code_ul)
+    #
+    #     # Ordered List
+    #
+    #     md_code_ol_asterisk = dedent('''\
+    #         1. List
+    #         2. Item
+    #         ''')
+    #     md_code_ol_hyphen = md_code_ol_asterisk.replace('*', '-')
+    #     html_code_ol = dedent('''\
+    #         <ol>
+    #           <li>List</li>
+    #           <li>Item</li>
+    #         </ol>''')
+    #     self.assertEqual(self.md_parser.parse(md_code_ol_asterisk), html_code_ol)
+    #     self.assertEqual(self.md_parser.parse(md_code_ol_hyphen), html_code_ol)
+    #
+    #     md_code_ol_asterisk = dedent('''\
+    #         1. some
+    #         2. stuff with
+    #         3. lots of
+    #             1. c
+    #             1. h
+    #             1. a
+    #             1. r
+    #             1. s
+    #         ''')
+    #     md_code_ol_hyphen = md_code_ol_asterisk.replace('*', '-')
+    #     html_code_ol = dedent('''\
+    #         <ol>
+    #           <li>some</li>
+    #           <li>stuff with</li>
+    #           <li>lots of
+    #             <ol>
+    #               <li>c</li>
+    #               <li>h</li>
+    #               <li>a</li>
+    #               <li>r</li>
+    #               <li>s</li>
+    #             </ol>
+    #           </li>
+    #         </ol>''')
+    #     self.assertEqual(self.md_parser.parse(md_code_ol_asterisk), html_code_ol)
+    #     self.assertEqual(self.md_parser.parse(md_code_ol_hyphen), html_code_ol)
+    #
+    #     # Mixed Lists
+    #
+    #     md_code_mixed_asterisk = dedent('''\
+    #         1. some
+    #         2. stuff with
+    #         3. lots of
+    #             * c
+    #             * h
+    #             * a
+    #             * r
+    #             * s
+    #         4. number continuation
+    #         ''')
+    #     md_code_mixed_hyphen = md_code_mixed_asterisk.replace('*', '-')
+    #     html_code_mixed = dedent('''\
+    #         <ol>
+    #           <li>some</li>
+    #           <li>stuff with</li>
+    #           <li>lots of
+    #             <ul>
+    #               <li>c</li>
+    #               <li>h</li>
+    #               <li>a</li>
+    #               <li>r</li>
+    #               <li>s</li>
+    #             </ul>
+    #           </li>
+    #           <li>number continuation</li>
+    #         </ol>''')
+    #     self.assertEqual(self.md_parser.parse(md_code_mixed_asterisk), html_code_mixed)
+    #     self.assertEqual(self.md_parser.parse(md_code_mixed_hyphen), html_code_mixed)
 
 #     def test_tables(self):
 #         md_code = dedent('''\

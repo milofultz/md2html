@@ -154,7 +154,6 @@ class MarkdownParser:
 
             # Close tag
             self.current_line += self.close_el('pre')
-            self.output.append(self.current_line)
 
     def use_list(self, list_type: str, li: str):
         # get leading white space
