@@ -109,23 +109,25 @@ class TestMarkdownParserBlocks(unittest.TestCase):
             </pre>''')
         self.assertEqual(html_code, self.md_parser.parse(md_code))
 
-    # def test_list(self):
-    #     # Unordered List
-    #
-    #     md_code_ul_asterisk = dedent('''\
-    #         * List
-    #         * Item
-    #         ''')
-    #     md_code_ul_hyphen = md_code_ul_asterisk.replace('*', '-')
-    #
-    #     html_code_ul = dedent('''\
-    #         <ul>
-    #           <li>List</li>
-    #           <li>Item</li>
-    #         </ul>''')
-    #
-    #     self.assertEqual(self.md_parser.parse(md_code_ul_asterisk), html_code_ul)
-    #     self.assertEqual(self.md_parser.parse(md_code_ul_hyphen), html_code_ul)
+    def test_unordered_list_asterisk(self):
+        md_code = dedent('''\
+            * List
+            * Item
+            ''')
+
+        html_code = '<ul><li>List</li><li>Item</li></ul>'
+
+        self.assertEqual(html_code, self.md_parser.parse(md_code))
+
+    def test_unordered_list_hyphen(self):
+        md_code = dedent('''\
+            - List
+            - Item
+            ''')
+
+        html_code = '<ul><li>List</li><li>Item</li></ul>'
+
+        self.assertEqual(html_code, self.md_parser.parse(md_code))
     #
     #     md_code_ul_asterisk = dedent('''\
     #         * some

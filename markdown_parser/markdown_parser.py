@@ -17,7 +17,7 @@ class MarkdownParser:
         # Block
         'code_block':       {'re':     re.compile(r'^```\w*$'),
                              'tag':    'pre'},
-        'ul':               {'re':     re.compile(r'^\s*\*\s'),
+        'ul':               {'re':     re.compile(r'^\s*[\*-]\s'),
                              'tag':    'ul'},
         'ol':               {'re':     re.compile(r'^\s*\d+\.\s'),
                              'tag':    'ol'},
@@ -160,9 +160,9 @@ class MarkdownParser:
         current_depth = (len(li) - len(li.lstrip())) // self.list_indent_interval
         
         if self.element_trace[-1] != list_type or current_depth > self.list_depth:
-            self.open_el(list_type)
+            self.current_line += self.open_el(list_type)
         elif current_depth < self.list_depth:
-            self.close_el(list_type)
+            self.current_line += self.close_el(list_type)
         # if leading whitespace matches current indentation
         else:
             pass
@@ -215,4 +215,6 @@ class MarkdownParser:
             if element == 'ROOT':
                 break
             self.use_el(element)
-        self.output.append(self.current_line)
+        if self.current_line:
+            self.output.append(self.current_line)
+            self.current_line = ''
