@@ -252,10 +252,12 @@ class TestMarkdownParserBlocks(unittest.TestCase):
               1. h
               1. a
               1. r
-              1. s
+                1. s
             ''')
         html_code = '<ol><li>some</li><li>stuff with</li><li>lots of' \
-                      '<ol><li>c</li><li>h</li><li>a</li><li>r</li><li>s</li></ol>' \
+                      '<ol><li>c</li><li>h</li><li>a</li><li>r' \
+                        '<ol><li>s</li></ol>' \
+                      '</li></ol>' \
                     '</li></ol>'
 
         self.assertEqual(html_code, self.md_parser.parse(md_code))
@@ -296,6 +298,7 @@ class TestMarkdownParserBlocks(unittest.TestCase):
                     '</table>'
 
         self.assertEqual(html_code, self.md_parser.parse(md_code))
+
 
 class TestMarkdownParserCombined(unittest.TestCase):
     def setUp(self):

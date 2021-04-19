@@ -71,6 +71,7 @@ class MarkdownParser:
 
         if not line:
             self.reset_element_trace()
+            self.list_depth = 0
         elif self.line_is('header', line):
             self.use_header(line)
         elif self.line_is('image', line):
