@@ -4,22 +4,24 @@ This is the part that takes in markdown and outputs valid HTML. As of now, it's 
 
 ## Currently supports:
 
-### Text blocks
+### Blocks
 
 * Headers
 * Paragraphs (with line breaks, if on adjacent lines)
-
-### Formatting
-
-* Strong
-* Links
-* Emphasis
-* Pre
-* Code
+* Code (triple backticks and indented 4 spaces)
+* Images (block only, no inline)
 * Horizontal rules
+
+### Inline Formatting
+
+* Strong (`**`)
+* Emphasis
+* Links
 
 ### Data
 
 * Lists
-* Tables (only with a header row)
-* Images
+  * 2 space indents
+  * Ordered and unordered
+  * Hyphens or asterisks for unordered
+* Tables (with a header row only, normal markdown)
