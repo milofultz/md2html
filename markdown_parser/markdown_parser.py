@@ -198,13 +198,15 @@ class MarkdownParser:
                 self.use_el(list_type)
                 if not first:
                     self.use_el('li')
+                    continue
+                first = False
         elif current_indent < self.list_depth:
             first = True
             while current_indent < self.list_depth:
+                self.list_depth -= 1
                 if first:
                     self.use_el('li')
                     first = False
-                self.list_depth -= 1
                 self.use_el(self.element_stack[-1])
                 self.use_el('li')
         elif self.element_stack[-1] not in [list_type, 'li']:
