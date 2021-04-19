@@ -9,7 +9,7 @@ This is the part that takes in markdown and outputs valid HTML. As of now, it's 
 * Headers
 * Paragraphs (with line breaks, if on adjacent lines)
 * Code (triple backticks or indented 4 spaces)
-* Images (`[!alt text](url)`)
+* Images (`![alt text](url)`)
   * block only, no inline images
 * Horizontal rules (`---` or more, if you want)
 
@@ -31,3 +31,8 @@ This is the part that takes in markdown and outputs valid HTML. As of now, it's 
   * first line is headers
   * second line is `---` followed by ` | ---` (rows - 1) times (e.g. 3 cols = `--- | --- | ---`)
   * each subsequent line is a row
+
+## Future:
+
+* Strikethrough (`~~`)
+* Blockquote (`> `)

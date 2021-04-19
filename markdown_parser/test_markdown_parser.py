@@ -85,7 +85,7 @@ class TestMarkdownParserSingleLines(unittest.TestCase):
     def test_image(self):
         # Won't do inline images, only as whole line
         self.assertEqual('<img src="https://duckduckgo.com/assets/logo_homepage.alt.v108.svg" alt="The whole line" title="The whole line" />',
-                         self.md_parser.parse('[!The whole line](https://duckduckgo.com/assets/logo_homepage.alt.v108.svg)'))
+                         self.md_parser.parse('![The whole line](https://duckduckgo.com/assets/logo_homepage.alt.v108.svg)'))
 
 
 class TestMarkdownParserBlocks(unittest.TestCase):
@@ -336,7 +336,7 @@ class TestMarkdownParserCombined(unittest.TestCase):
           --- | --- | ---
           Cell 1 | Cell2 | Cell 3 || with pipes
 
-          [!Cat](http://1.bp.blogspot.com/-Flgz-X52Sa8/T-xaP9vmUZI/AAAAAAAABBg/B8pL7lpfd8w/s1600/newsitemoet.jpeg)''')
+          ![Cat](http://1.bp.blogspot.com/-Flgz-X52Sa8/T-xaP9vmUZI/AAAAAAAABBg/B8pL7lpfd8w/s1600/newsitemoet.jpeg)''')
         html_code = dedent('''\
           <h1>Header</h1>
           <p>This should be a <strong>paragraph</strong>, with some <em>italics</em>, as well.</p>

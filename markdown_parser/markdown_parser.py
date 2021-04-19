@@ -18,7 +18,7 @@ class MarkdownParser:
         'code':                 re.compile(r'^`(?!`)'),
         'link':                 re.compile(r'^\[[^\[\]]+]\([^()]+\)'),
         'link_simple':          re.compile(r'^<\S+\.\S+>'),
-        'image':                re.compile(r'^\[![^\[\]]+]\([^()]+\)$'),
+        'image':                re.compile(r'^!\[[^\[\]]+]\([^()]+\)$'),
         # Tables
         'table_div':            re.compile(r'^---(\s\|\s---)+$'),
         'table_row':            re.compile(r'^[^|]+((\s\|\s).+[^\s|])+$'),
@@ -132,7 +132,7 @@ class MarkdownParser:
         return 'h' + str(header_depth)
 
     def use_image(self, image: str):
-        image = image[2:-1]  # [! ... ]
+        image = image[2:-1]  # ![ ... ]
         alt, src = image.split('](')
         # Self closing tag
         self.use_el('img', {'src': src, 'alt': alt, 'title': alt}, True)
