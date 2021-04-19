@@ -195,33 +195,22 @@ class TestMarkdownParserBlocks(unittest.TestCase):
 
         self.assertEqual(html_code, self.md_parser.parse(md_code))
 
-    #     md_code_ol_asterisk = dedent('''\
-    #         1. some
-    #         2. stuff with
-    #         3. lots of
-    #             1. c
-    #             1. h
-    #             1. a
-    #             1. r
-    #             1. s
-    #         ''')
-    #     md_code_ol_hyphen = md_code_ol_asterisk.replace('*', '-')
-    #     html_code_ol = dedent('''\
-    #         <ol>
-    #           <li>some</li>
-    #           <li>stuff with</li>
-    #           <li>lots of
-    #             <ol>
-    #               <li>c</li>
-    #               <li>h</li>
-    #               <li>a</li>
-    #               <li>r</li>
-    #               <li>s</li>
-    #             </ol>
-    #           </li>
-    #         </ol>''')
-    #     self.assertEqual(self.md_parser.parse(md_code_ol_asterisk), html_code_ol)
-    #     self.assertEqual(self.md_parser.parse(md_code_ol_hyphen), html_code_ol)
+    def test_ordered_list_indent(self):
+        md_code = dedent('''\
+            1. some
+            2. stuff with
+            3. lots of
+              1. c
+              1. h
+              1. a
+              1. r
+              1. s
+            ''')
+        html_code = '<ol><li>some</li><li>stuff with</li><li>lots of' \
+                      '<ol><li>c</li><li>h</li><li>a</li><li>r</li><li>s</li></ol>' \
+                    '</li></ol>'
+
+        self.assertEqual(html_code, self.md_parser.parse(md_code))
     #
     #     # Mixed Lists
     #
