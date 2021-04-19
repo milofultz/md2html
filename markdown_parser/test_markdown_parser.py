@@ -25,6 +25,9 @@ class TestMarkdownParserWhitespace(unittest.TestCase):
 
             Test''')))
 
+    def test_html_escaping(self):
+        self.assertEqual('<p>Me &amp; Bobby McGee &lt;&gt;</p>', self.md_parser.parse('Me & Bobby McGee <>'))
+
 
 class TestMarkdownParserSingleLines(unittest.TestCase):
     def setUp(self):
@@ -58,6 +61,10 @@ class TestMarkdownParserSingleLines(unittest.TestCase):
     def test_code_inline(self):
         self.assertEqual('<p>Somewhere in the <code>middle</code> of the line</p>',
                          self.md_parser.parse('Somewhere in the `middle` of the line'))
+
+    def test_code_inline_no_inner_parse(self):
+        self.assertEqual('<p><code>[middle](href.com)</code></p>',
+                         self.md_parser.parse('`[middle](href.com)`'))
 
     def test_link(self):
         self.assertEqual('<p><a href="example.com">The whole line</a></p>',
@@ -94,11 +101,13 @@ class TestMarkdownParserBlocks(unittest.TestCase):
             This is some code
             that should be wrapped
             into one chunk
+            [This shouldn't be parsed](google.com)
             ```''')
         html_code = dedent('''\
             <pre>This is some code
             that should be wrapped
             into one chunk
+            [This shouldn't be parsed](google.com)
             </pre>''')
         self.assertEqual(html_code, self.md_parser.parse(md_code))
 
