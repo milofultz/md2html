@@ -9,7 +9,6 @@ import re
 
 
 class MarkdownParser:
-    # create regex matches
     elements = {
         # Whole line
         'header':       re.compile(r'^#+'),
@@ -93,27 +92,18 @@ class MarkdownParser:
 
     def use_header(self, header: str):
         header_tag = self.get_header_depth(header)
-
-        # Open tag
         self.use_el(header_tag)
-
-        # Parse remaining text 
         text = re.split('^#+', header)[1].strip()
         self.parse_inline(text)
-
-        # Close tag
         self.use_el(header_tag)
 
     def get_header_depth(self, header: str):
-        # find how many hashes there are
         header_depth = self.elements['header'].search(header).span()[1]
-        # return formatted string of element name
         return 'h' + str(header_depth)
 
     def use_image(self, image: str):
         image = image[2:-1]  # [! ... ]
         alt, src = image.split('](')
-
         # Self closing tag
         self.use_el('img', {'src': src, 'alt': alt, 'title': alt}, True)
 
@@ -123,15 +113,11 @@ class MarkdownParser:
     def use_link(self, link: str):
         link = link[1:-1]  # [ ... )
         text, href = link.split('](')
-
-        # Open tag
         self.use_el('a', {'href': href, '_content': text})
 
     def use_code_block(self, code_block: str):
         if self.element_trace[-1] != 'pre':
             self.pre = True
-
-            # Open tag
             lang = code_block[3:]
             if lang:
                 self.current_line += self.open_el('pre', {'data-code-lang': lang})
@@ -139,8 +125,6 @@ class MarkdownParser:
                 self.current_line += self.open_el('pre')
         else:
             self.pre = False
-
-            # Close tag
             self.current_line += self.close_el('pre')
 
     def use_table(self, line: str):
@@ -165,7 +149,6 @@ class MarkdownParser:
             self.use_el('tr')
 
     def use_list(self, list_type: str, li: str):
-        # get leading white space
         current_indent = (len(li) - len(li.lstrip())) // self.list_indent_interval
 
         if current_indent > self.list_depth:
@@ -191,9 +174,7 @@ class MarkdownParser:
 
         self.list_depth = current_indent
 
-        # get text content
         text = self.elements[list_type].split(li.lstrip())[1]
-        # create li element with text content
         self.use_el('li')
         self.parse_inline(text)
 
