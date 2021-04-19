@@ -211,38 +211,24 @@ class TestMarkdownParserBlocks(unittest.TestCase):
                     '</li></ol>'
 
         self.assertEqual(html_code, self.md_parser.parse(md_code))
-    #
-    #     # Mixed Lists
-    #
-    #     md_code_mixed_asterisk = dedent('''\
-    #         1. some
-    #         2. stuff with
-    #         3. lots of
-    #             * c
-    #             * h
-    #             * a
-    #             * r
-    #             * s
-    #         4. number continuation
-    #         ''')
-    #     md_code_mixed_hyphen = md_code_mixed_asterisk.replace('*', '-')
-    #     html_code_mixed = dedent('''\
-    #         <ol>
-    #           <li>some</li>
-    #           <li>stuff with</li>
-    #           <li>lots of
-    #             <ul>
-    #               <li>c</li>
-    #               <li>h</li>
-    #               <li>a</li>
-    #               <li>r</li>
-    #               <li>s</li>
-    #             </ul>
-    #           </li>
-    #           <li>number continuation</li>
-    #         </ol>''')
-    #     self.assertEqual(self.md_parser.parse(md_code_mixed_asterisk), html_code_mixed)
-    #     self.assertEqual(self.md_parser.parse(md_code_mixed_hyphen), html_code_mixed)
+
+    def test_unordered_and_ordered_lists(self):
+        md_code = dedent('''\
+            1. some
+            202. stuff with
+            13. lots of
+              * c
+              * h
+              - a
+              * r
+              - s
+            1. number continuation
+            ''')
+        html_code = '<ol><li>some</li><li>stuff with</li><li>lots of' \
+                      '<ul><li>c</li><li>h</li><li>a</li><li>r</li><li>s</li></ul>' \
+                    '</li><li>number continuation</li></ol>'
+
+        self.assertEqual(html_code, self.md_parser.parse(md_code))
 
 #     def test_tables(self):
 #         md_code = dedent('''\

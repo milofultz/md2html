@@ -173,7 +173,7 @@ class MarkdownParser:
                     self.use_el('li')
                     first = False
                 self.list_depth -= 1
-                self.use_el(list_type)
+                self.use_el(self.element_trace[-1])
                 self.use_el('li')
         elif self.element_trace[-1] not in [list_type, 'li']:
             self.use_el(list_type)
