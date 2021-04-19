@@ -253,4 +253,4 @@ if __name__ == '__main__':
     with open(out_fp, 'w') as html:
         html.write(parsed_markdown)
 
-    print(f'{in_fp}:markdown --> {out_fp}:html')
+    print(f'({in_fp}) : markdown --> html : ({out_fp})')
