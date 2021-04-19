@@ -1,12 +1,5 @@
 import re
 
-# I: markdown string (most of a file containing front matter and Jinja2 templates)
-# O: HTML file
-# C: no inline HTML
-#    Only using headers, strong, em, links, images, lists, tables, code blocks, code inline
-# E: incomplete tag (e.g. **Hello!): throw error with line number and line contents
-#    incorrect formatting: throw error with line number and line contents
-
 
 class MarkdownParser:
     elements = {
