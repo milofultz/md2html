@@ -242,10 +242,12 @@ class TestMarkdownParserBlocks(unittest.TestCase):
             this | is a | header
             --- | --- | ---
             1 | pipe test||| | and text 
+            2 | pipes | are cool! 
             ''')
         html_code = '<table>' \
                       '<thead><tr><th scope="col">this</th><th scope="col">is a</th><th scope="col">header</th></tr></thead>' \
-                      '<tbody><tr><td>1</td><td>pipe test|||</td><td>and text</td></tr></tbody>' \
+                      '<tbody><tr><td>1</td><td>pipe test|||</td><td>and text</td></tr>' \
+                      '<tr><td>2</td><td>pipes</td><td>are cool!</td></tr></tbody>' \
                     '</table>'
 
         self.assertEqual(html_code, self.md_parser.parse(md_code))
