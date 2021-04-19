@@ -176,49 +176,25 @@ class TestMarkdownParserBlocks(unittest.TestCase):
 
         self.assertEqual(html_code, self.md_parser.parse(md_code))
 
-    #     md_code_ul_asterisk = dedent('''\
-    #         * some
-    #         * stuff with
-    #         * lots of
-    #             * c
-    #             * h
-    #             * a
-    #             * r
-    #             * s
-    #         ''')
-    #     md_code_ul_hyphen = md_code_ul_asterisk.replace('*', '-')
-    #     html_code_ul = dedent('''\
-    #         <ul>
-    #           <li>some</li>
-    #           <li>stuff with</li>
-    #           <li>lots of
-    #             <ul>
-    #               <li>c</li>
-    #               <li>h</li>
-    #               <li>a</li>
-    #               <li>r</li>
-    #               <li>s</li>
-    #             </ul>
-    #           </li>
-    #         </ul>''')
-    #     self.assertEqual(self.md_parser.parse(md_code_ul_asterisk), html_code_ul)
-    #     self.assertEqual(self.md_parser.parse(md_code_ul_hyphen), html_code_ul)
-    #
-    #     # Ordered List
-    #
-    #     md_code_ol_asterisk = dedent('''\
-    #         1. List
-    #         2. Item
-    #         ''')
-    #     md_code_ol_hyphen = md_code_ol_asterisk.replace('*', '-')
-    #     html_code_ol = dedent('''\
-    #         <ol>
-    #           <li>List</li>
-    #           <li>Item</li>
-    #         </ol>''')
-    #     self.assertEqual(self.md_parser.parse(md_code_ol_asterisk), html_code_ol)
-    #     self.assertEqual(self.md_parser.parse(md_code_ol_hyphen), html_code_ol)
-    #
+    def test_ordered_list(self):
+        md_code = dedent('''\
+            1. List
+            2. Item
+            ''')
+        html_code = '<ol><li>List</li><li>Item</li></ol>'
+
+        self.assertEqual(html_code, self.md_parser.parse(md_code))
+
+    def test_ordered_list_mixed(self):
+        md_code = dedent('''\
+            1. List
+            1. Item
+            54. Out of order
+            ''')
+        html_code = '<ol><li>List</li><li>Item</li><li>Out of order</li></ol>'
+
+        self.assertEqual(html_code, self.md_parser.parse(md_code))
+
     #     md_code_ol_asterisk = dedent('''\
     #         1. some
     #         2. stuff with
