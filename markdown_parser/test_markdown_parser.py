@@ -3,8 +3,6 @@ from markdown_parser import MarkdownParser
 
 from textwrap import dedent
 
-# import the markdown parser module, this name is a placeholder
-
 
 class TestMarkdownParserWhitespace(unittest.TestCase):
     def setUp(self):
@@ -338,7 +336,6 @@ class TestMarkdownParserCombined(unittest.TestCase):
           <img src="http://1.bp.blogspot.com/-Flgz-X52Sa8/T-xaP9vmUZI/AAAAAAAABBg/B8pL7lpfd8w/s1600/newsitemoet.jpeg" alt="Cat" title="Cat" />''')
 
         self.assertEqual(html_code, self.md_parser.parse(md_code))
-
 
 
 if __name__ == '__main__':
