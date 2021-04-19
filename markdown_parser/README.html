@@ -2,8 +2,10 @@
 <p>This is the part that takes in markdown and outputs valid HTML. As of now, it's buggy, as I need more tests, but it works for real basic stuff.</p>
 <h2>Currently supports:</h2>
 <h3>Blocks</h3>
-<ul><li>Headers</li><li>Paragraphs (with line breaks, if on adjacent lines)</li><li>Code (triple backticks or indented 4 spaces)</li><li>Images (<code>[!alt text](url)</code>)<ul><li>block only, no inline images</li></ul></li><li>Horizontal rules (<code>---</code> or more, if you want)</li></ul>
+<ul><li>Headers</li><li>Paragraphs (with line breaks, if on adjacent lines)</li><li>Code (triple backticks or indented 4 spaces)</li><li>Images (<code>![alt text](url)</code>)<ul><li>block only, no inline images</li></ul></li><li>Horizontal rules (<code>---</code> or more, if you want)</li></ul>
 <h3>Inline Formatting</h3>
 <ul><li>Strong (<code>**</code>)</li><li>Emphasis (<code>*</code>)</li><li>Links (<code>[text](url)</code>)</li><li>Simple links (<code>&lt;url&gt;</code>)</li><li>Code (backticks)</li></ul>
 <h3>Data</h3>
 <ul><li>Lists<ul><li>2 spaces per indent</li><li>Ordered (<code>1.</code>, <code>42.</code>, etc.) and unordered (<code>*</code> or <code>-</code>)</li></ul></li><li>Tables (with a header row only, minimal markdown)<ul><li>cols always separated by <code> | </code></li><li>first line is headers</li><li>second line is <code>---</code> followed by <code> | ---</code> (rows - 1) times (e.g. 3 cols = <code>--- | --- | ---</code>)</li><li>each subsequent line is a row</li></ul></li></ul>
+<h2>Future:</h2>
+<ul><li>Strikethrough (<code>~~</code>)</li><li>Blockquote (<code>&gt; </code>)</li></ul>
