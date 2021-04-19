@@ -97,7 +97,6 @@ class MarkdownParser:
                 i += len(link) - 1  # go to end of link inline
             else:
                 self.current_line += line[i]
-
             i += 1
 
     def line_is(self, element: str, line: str):
