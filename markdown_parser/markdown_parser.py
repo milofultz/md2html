@@ -29,10 +29,10 @@ class MarkdownParser:
     }
 
     def __init__(self):
-        # all elements should be nested within, not between
         self.element_trace = ['ROOT']
         self.current_line = ''
         self.output = []
+        # Element information
         self.pre = False
         self.list_indent_interval = 2
         self.list_depth = 0
@@ -70,7 +70,6 @@ class MarkdownParser:
 
     def parse_inline(self, line: str):
         i = 0
-
         while i < len(line):
             if self.line_is('strong', line[i:]):
                 self.use_el('strong')
