@@ -18,6 +18,7 @@ This is the part that takes in markdown and outputs valid HTML. As of now, it's 
 * Strong (`**`)
 * Emphasis (`*`)
 * Links (`[text](url)`)
+* Simple links (`<url>`)
 * Code (backticks)
 
 ### Data

@@ -67,6 +67,14 @@ class TestMarkdownParserSingleLines(unittest.TestCase):
         self.assertEqual('<p>Somewhere in the <a href="http://www.example.com">middle</a> of the line</p>',
                          self.md_parser.parse('Somewhere in the [middle](http://www.example.com) of the line'))
 
+    def test_link_simple(self):
+        self.assertEqual('<p><a href="example.com">example.com</a></p>',
+                         self.md_parser.parse('<example.com>'))
+
+    def test_link_simple_inline(self):
+        self.assertEqual('<p>Somewhere in the <a href="http://www.example.com">http://www.example.com</a> of the line</p>',
+                         self.md_parser.parse('Somewhere in the <http://www.example.com> of the line'))
+
     def test_image(self):
         # Won't do inline images, only as whole line
         self.assertEqual('<img src="https://duckduckgo.com/assets/logo_homepage.alt.v108.svg" alt="The whole line" title="The whole line" />',

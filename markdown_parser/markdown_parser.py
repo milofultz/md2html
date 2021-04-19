@@ -17,6 +17,7 @@ class MarkdownParser:
         'em':                   re.compile(r'^\*(?!\*)'),
         'code':                 re.compile(r'^`(?!`)'),
         'link':                 re.compile(r'^\[[^\[\]]+]\([^()]+\)'),
+        'link_simple':          re.compile(r'^<\S+\.\S+>'),
         'image':                re.compile(r'^\[![^\[\]]+]\([^()]+\)$'),
         # Tables
         'table_div':            re.compile(r'^---(\s\|\s---)+$'),
@@ -95,7 +96,7 @@ class MarkdownParser:
                 self.use_el('em')
             elif self.line_is('code', line[i:]):
                 self.use_el('code')
-            elif self.line_is('link', line[i:]):
+            elif self.line_is('link', line[i:]) or self.line_is('link_simple', line[i:]):
                 link = self.get_link(line[i:])
                 self.use_link(link)
                 i += len(link) - 1  # go to end of link inline
@@ -124,12 +125,19 @@ class MarkdownParser:
         self.use_el('img', {'src': src, 'alt': alt, 'title': alt}, True)
 
     def get_link(self, line: str) -> str:
-        return self.elements['link'].search(line).group()
+        if line[0] == '<':
+            return self.elements['link_simple'].search(line).group()
+        else:
+            return self.elements['link'].search(line).group()
 
     def use_link(self, link: str):
-        link = link[1:-1]  # [ ... )
-        text, href = link.split('](')
-        self.use_el('a', {'href': href, '_content': text})
+        if link[0] == '<':
+            link = link[1:-1]  # < ... >
+            self.use_el('a', {'href': link, '_content': link})
+        else:
+            link = link[1:-1]  # [ ... )
+            text, href = link.split('](')
+            self.use_el('a', {'href': href, '_content': text})
 
     def use_code_block(self, code_block: str):
         # Indent block
