@@ -168,7 +168,7 @@ class MarkdownParser:
                     self.use_el('li')
         elif current_indent < self.list_depth:
             first = True
-            while current_indent > self.list_depth:
+            while current_indent < self.list_depth:
                 if first:
                     self.use_el('li')
                     first = False

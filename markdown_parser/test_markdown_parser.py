@@ -142,39 +142,39 @@ class TestMarkdownParserBlocks(unittest.TestCase):
 
         self.assertEqual(html_code, self.md_parser.parse(md_code))
 
-    # def test_unordered_list_indent_deep(self):
-    #     md_code = dedent('''\
-    #         - List
-    #           - Item
-    #             - Sub
-    #         - Back
-    #         ''')
-    #
-    #     html_code = '<ul><li>List' \
-    #                   '<ul><li>Item' \
-    #                     '<ul><li>Sub</li></ul>' \
-    #                   '</li></ul>' \
-    #                 '</li><li>Back</li>'
-    #
-    #     self.assertEqual(html_code, self.md_parser.parse(md_code))
-    #
-    # def test_unordered_list_indent_mixed(self):
-    #     md_code = dedent('''\
-    #         * List
-    #         - Item
-    #           - Sub
-    #           * Item
-    #             - One more
-    #         * And back
-    #         ''')
-    #
-    #     html_code = '<ul><li>List</li><li>Item' \
-    #                   '<ul><li>Sub</li><li>Item' \
-    #                     '<ul><li>One more</li></ul></li>' \
-    #                   '</ul></li>' \
-    #                 '<li>And back</li></ul>'
-    #
-    #     self.assertEqual(html_code, self.md_parser.parse(md_code))
+    def test_unordered_list_indent_deep(self):
+        md_code = dedent('''\
+            - List
+              - Item
+                - Sub
+            - Back
+            ''')
+
+        html_code = '<ul><li>List' \
+                      '<ul><li>Item' \
+                        '<ul><li>Sub</li></ul>' \
+                      '</li></ul>' \
+                    '</li><li>Back</li></ul>'
+
+        self.assertEqual(html_code, self.md_parser.parse(md_code))
+
+    def test_unordered_list_indent_mixed(self):
+        md_code = dedent('''\
+            * List
+            - Item
+              - Sub
+              * Item
+                - One more
+            * And back
+            ''')
+
+        html_code = '<ul><li>List</li><li>Item' \
+                      '<ul><li>Sub</li><li>Item' \
+                        '<ul><li>One more</li></ul></li>' \
+                      '</ul></li>' \
+                    '<li>And back</li></ul>'
+
+        self.assertEqual(html_code, self.md_parser.parse(md_code))
 
     #     md_code_ul_asterisk = dedent('''\
     #         * some
