@@ -222,13 +222,17 @@ class TestMarkdownParserBlocks(unittest.TestCase):
             13. lots of
               * c
               * h
-              - a
-              * r
+                - a
+                  1. r
               - s
             1. number continuation
             ''')
         html_code = '<ol><li>some</li><li>stuff with</li><li>lots of' \
-                      '<ul><li>c</li><li>h</li><li>a</li><li>r</li><li>s</li></ul>' \
+                      '<ul><li>c</li><li>h' \
+                        '<ul><li>a' \
+                          '<ol><li>r</li>' \
+                        '</ol></li>' \
+                      '</ul></li><li>s</li></ul>' \
                     '</li><li>number continuation</li></ol>'
 
         self.assertEqual(html_code, self.md_parser.parse(md_code))
