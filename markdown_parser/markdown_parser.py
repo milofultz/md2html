@@ -61,6 +61,8 @@ class MarkdownParser:
             self.use_image(line)
         elif self.line_is('code_block', line):
             self.use_code_block(line)
+        elif self.line_is('table_row', line):
+            self.use_table(line)
         elif self.line_is('ul', line):
             self.use_list('ul', line)
         elif self.line_is('ol', line):
@@ -141,6 +143,27 @@ class MarkdownParser:
             # Close tag
             self.current_line += self.close_el('pre')
 
+    def use_table(self, line: str):
+        # instantiating the table if first table line seen
+        if self.element_trace[-1] == 'ROOT':
+            self.use_el('table')
+            self.use_el('thead')
+            self.use_el('tr')
+            cells = line.split(' | ')
+            for cell in cells:
+                self.use_el('th', {'_content': cell, 'scope': 'col'})
+            self.use_el('tr')
+            self.use_el('thead')
+        # if dividing line
+        elif self.line_is('table_div', line):
+            self.use_el('tbody')
+        else:
+            self.use_el('tr')
+            cells = line.split(' | ')
+            for cell in cells:
+                self.use_el('td', {'_content': cell})
+            self.use_el('tr')
+
     def use_list(self, list_type: str, li: str):
         # get leading white space
         current_indent = (len(li) - len(li.lstrip())) // self.list_indent_interval
@@ -187,9 +210,7 @@ class MarkdownParser:
             self.current_line += self.open_el(element, options_no_content)
             self.parse_inline(options['_content'])
             self.current_line += self.close_el(element)
-            return
-
-        if self.element_trace[-1] != element:
+        elif self.element_trace[-1] != element:
             self.current_line += self.open_el(element, options, self_closing)
         else:
             self.current_line += self.close_el(element)

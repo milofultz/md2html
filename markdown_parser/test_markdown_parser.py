@@ -230,31 +230,18 @@ class TestMarkdownParserBlocks(unittest.TestCase):
 
         self.assertEqual(html_code, self.md_parser.parse(md_code))
 
-#     def test_tables(self):
-#         md_code = dedent('''\
-#             this | is a | header
-#             --- | --- | ---
-#             1 | pipe test||| | and text 
-#             ''')
-#         html_code = dedent('''\
-#             <table>
-#               <thead>
-#                 <tr>
-#                   <th scope="col">this</th>
-#                   <th scope="col">is a</th>
-#                   <th scope="col">header</th>
-#                 </tr>
-#               </thead>
-#               <tbody>
-#                 <tr>
-#                   <td>1</td>
-#                   <td>pipe test|||</td>
-#                   <td>and text</td>
-#                 </tr>
-#               </tbody>
-#             </table>
-#             ''')
-#         self.assertEqual(self.md_parser.parse(md_code), html_code)
+    def test_tables(self):
+        md_code = dedent('''\
+            this | is a | header
+            --- | --- | ---
+            1 | pipe test||| | and text 
+            ''')
+        html_code = '<table>' \
+                      '<thead><tr><th scope="col">this</th><th scope="col">is a</th><th scope="col">header</th></tr></thead>' \
+                      '<tbody><tr><td>1</td><td>pipe test|||</td><td>and text</td></tr></tbody>' \
+                    '</table>'
+
+        self.assertEqual(html_code, self.md_parser.parse(md_code))
 
 
 if __name__ == '__main__':
