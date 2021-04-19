@@ -96,7 +96,21 @@ class TestMarkdownParserBlocks(unittest.TestCase):
             </pre>''')
         self.assertEqual(html_code, self.md_parser.parse(md_code))
 
-    def test_code_block_indents(self):
+    def test_code_block_indent(self):
+        md_code = dedent('''\
+                This is some code
+                that should be wrapped
+                into one chunk
+            reference''')
+        html_code = dedent('''\
+            <pre>This is some code
+            that should be wrapped
+            into one chunk
+            </pre>
+            <p>reference</p>''')
+        self.assertEqual(html_code, self.md_parser.parse(md_code))
+
+    def test_code_block_whitespace(self):
         md_code = dedent('''\
             ```
             This
@@ -110,6 +124,22 @@ class TestMarkdownParserBlocks(unittest.TestCase):
                     however we want it to
              a
             </pre>''')
+        self.assertEqual(html_code, self.md_parser.parse(md_code))
+
+    def test_code_block_indent_whitespace(self):
+        md_code = dedent('''\
+                This
+                  should indent
+                        however we want it to
+                 a
+            reference''')
+        html_code = dedent('''\
+            <pre>This
+              should indent
+                    however we want it to
+             a
+            </pre>
+            <p>reference</p>''')
         self.assertEqual(html_code, self.md_parser.parse(md_code))
 
     def test_unordered_list_asterisk(self):

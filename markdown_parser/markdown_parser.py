@@ -5,21 +5,22 @@ import sys
 class MarkdownParser:
     elements = {
         # Whole line
-        'header':       re.compile(r'^#+'),
-        'hr':           re.compile(r'^--(-){1,}$'),
+        'header':               re.compile(r'^#+'),
+        'hr':                   re.compile(r'^--(-){1,}$'),
         # Block
-        'code_block':   re.compile(r'^```\w*$'),
-        'ul':           re.compile(r'^\s*[\*-]\s'),
-        'ol':           re.compile(r'^\s*\d+\.\s'),
+        'code_block':           re.compile(r'^`{3}\w*$'),
+        'code_block_indent':    re.compile(r'^\s{4}'),
+        'ul':                   re.compile(r'^\s*[*-]\s'),
+        'ol':                   re.compile(r'^\s*\d+\.\s'),
         # Inline
-        'strong':       re.compile(r'^\*\*'),
-        'em':           re.compile(r'^\*(?!\*)'),
-        'code':         re.compile(r'^`(?!`)'),
-        'link':         re.compile(r'^\[[^\[\]]+]\([^()]+\)'),
-        'image':        re.compile(r'^\[![^\[\]]+]\([^()]+\)$'),
+        'strong':               re.compile(r'^\*\*'),
+        'em':                   re.compile(r'^\*(?!\*)'),
+        'code':                 re.compile(r'^`(?!`)'),
+        'link':                 re.compile(r'^\[[^\[\]]+]\([^()]+\)'),
+        'image':                re.compile(r'^\[![^\[\]]+]\([^()]+\)$'),
         # Tables
-        'table_div':    re.compile(r'^---(\s\|\s---)+$'),
-        'table_row':    re.compile(r'^[^|]+((\s\|\s).+[^\s|])+$'),
+        'table_div':            re.compile(r'^---(\s\|\s---)+$'),
+        'table_row':            re.compile(r'^[^|]+((\s\|\s).+[^\s|])+$'),
     }
     list_indent_interval = 2
 
@@ -28,6 +29,7 @@ class MarkdownParser:
         self.current_line = ''
         self.output = []
         self.pre = False
+        self.pre_indent = False
         self.list_depth = 0
 
     def parse(self, markdown):
@@ -36,6 +38,7 @@ class MarkdownParser:
         self.current_line = ''
         self.output = []
         self.pre = False
+        self.pre_indent = False
         self.list_depth = 0
 
         for line in markdown.split('\n'):
@@ -44,28 +47,39 @@ class MarkdownParser:
         return '\n'.join(self.output)
 
     def parse_line(self, line):
-        if self.element_stack[-1] == 'pre' and not self.line_is('code_block', line):
-            self.current_line += line + '\n'
-            return
+        if self.pre:
+            if self.line_is('code_block', line):
+                self.pre = False
+                self.reset_element_trace()
+                return
+            else:
+                self.current_line += line + '\n'
+                return
+        elif self.pre_indent:
+            if line[:4] != '    ':
+                self.pre_indent = False
+                self.reset_element_trace()
+                # Continue to parse current line normally
+            else:
+                self.current_line += line[4:] + '\n'
+                return
 
         line = line.rstrip()
 
-        if not line:
-            self.reset_element_trace()
-        elif self.line_is('header', line):
+        if self.line_is('header', line):
             self.use_header(line)
         elif self.line_is('image', line):
             self.use_image(line)
-        elif self.line_is('code_block', line):
+        elif self.line_is('ul', line):
+            self.use_list('ul', line)
+        elif self.line_is('ol', line):
+            self.use_list('ol', line)
+        elif self.line_is('code_block', line) or self.line_is('code_block_indent', line):
             self.use_code_block(line)
         elif self.line_is('table_row', line):
             self.use_table(line)
         elif self.line_is('hr', line):
             self.use_el('hr', None, True)
-        elif self.line_is('ul', line):
-            self.use_list('ul', line)
-        elif self.line_is('ol', line):
-            self.use_list('ol', line)
         else:
             self.use_paragraph(line)
 
@@ -116,16 +130,19 @@ class MarkdownParser:
         self.use_el('a', {'href': href, '_content': text})
 
     def use_code_block(self, code_block: str):
-        if self.element_stack[-1] != 'pre':
-            self.pre = True
-            lang = code_block[3:]
-            if lang:
-                self.current_line += self.open_el('pre', {'data-code-lang': lang})
-            else:
-                self.current_line += self.open_el('pre')
+        # Indent block
+        if code_block[:4] == '    ':
+            self.pre_indent = True
+            self.use_el('pre')
+            self.current_line += code_block[4:] + '\n'
+            return
+
+        # Triple backticks
+        self.pre = True
+        if code_block[3:]:
+            self.use_el('pre', {'data-code-lang': code_block[3:]})
         else:
-            self.pre = False
-            self.current_line += self.close_el('pre')
+            self.use_el('pre')
 
     def use_table(self, line: str):
         # instantiating the table if first table line seen
