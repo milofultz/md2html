@@ -26,19 +26,22 @@ class MarkdownParser:
         'table_div':    re.compile(r'^---(\s\|\s---)+$'),
         'table_row':    re.compile(r'^[^|]+((\s\|\s).+[^\s|])+$'),
     }
+    list_indent_interval = 2
 
     def __init__(self):
-        self.element_trace = ['ROOT']
+        self.element_stack = []
         self.current_line = ''
         self.output = []
-        # Element information
         self.pre = False
-        self.list_indent_interval = 2
         self.list_depth = 0
 
     def parse(self, markdown):
+        # Set up vars
+        self.element_stack = ['ROOT']
         self.current_line = ''
         self.output = []
+        self.pre = False
+        self.list_depth = 0
 
         for line in markdown.split('\n'):
             self.parse_line(line)
@@ -46,7 +49,7 @@ class MarkdownParser:
         return '\n'.join(self.output)
 
     def parse_line(self, line):
-        if self.element_trace[-1] == 'pre' and not self.line_is('code_block', line):
+        if self.element_stack[-1] == 'pre' and not self.line_is('code_block', line):
             self.current_line += line + '\n'
             return
 
@@ -116,7 +119,7 @@ class MarkdownParser:
         self.use_el('a', {'href': href, '_content': text})
 
     def use_code_block(self, code_block: str):
-        if self.element_trace[-1] != 'pre':
+        if self.element_stack[-1] != 'pre':
             self.pre = True
             lang = code_block[3:]
             if lang:
@@ -129,7 +132,7 @@ class MarkdownParser:
 
     def use_table(self, line: str):
         # instantiating the table if first table line seen
-        if self.element_trace[-1] == 'ROOT':
+        if self.element_stack[-1] == 'ROOT':
             self.use_el('table')
             self.use_el('thead')
             self.use_el('tr')
@@ -165,9 +168,9 @@ class MarkdownParser:
                     self.use_el('li')
                     first = False
                 self.list_depth -= 1
-                self.use_el(self.element_trace[-1])
+                self.use_el(self.element_stack[-1])
                 self.use_el('li')
-        elif self.element_trace[-1] not in [list_type, 'li']:
+        elif self.element_stack[-1] not in [list_type, 'li']:
             self.use_el(list_type)
         else:
             self.use_el('li')
@@ -179,7 +182,7 @@ class MarkdownParser:
         self.parse_inline(text)
 
     def use_paragraph(self, text: str):
-        if self.element_trace[-1] != 'p':
+        if self.element_stack[-1] != 'p':
             self.current_line = self.open_el('p')
         else:
             self.use_el('br', None, True)
@@ -191,13 +194,13 @@ class MarkdownParser:
             self.current_line += self.open_el(element, options_no_content)
             self.parse_inline(options['_content'])
             self.current_line += self.close_el(element)
-        elif self.element_trace[-1] != element:
+        elif self.element_stack[-1] != element:
             self.current_line += self.open_el(element, options, self_closing)
         else:
             self.current_line += self.close_el(element)
 
     def open_el(self, element: str, options: dict = None, self_closing=False):
-        self.element_trace.append(element)
+        self.element_stack.append(element)
         attributes = ''
         if options:
             for attr, value in options.items():
@@ -205,15 +208,15 @@ class MarkdownParser:
         suffix = '>'
         if self_closing:
             suffix = ' />'
-            self.element_trace.pop()
+            self.element_stack.pop()
         return '<' + element + attributes + suffix
 
     def close_el(self, element: str):
-        self.element_trace.pop()
+        self.element_stack.pop()
         return '</' + element + '>'
 
     def reset_element_trace(self):
-        for element in reversed(self.element_trace):
+        for element in reversed(self.element_stack):
             if element == 'ROOT':
                 break
             self.use_el(element)
