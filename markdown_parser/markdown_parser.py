@@ -12,32 +12,20 @@ class MarkdownParser:
     # create regex matches
     elements = {
         # Whole line
-        'header':           {'re':     re.compile(r'^#+'),
-                             'tag':    'h'},
+        'header':       re.compile(r'^#+'),
         # Block
-        'code_block':       {'re':     re.compile(r'^```\w*$'),
-                             'tag':    'pre'},
-        'ul':               {'re':     re.compile(r'^\s*[\*-]\s'),
-                             'tag':    'ul'},
-        'ol':               {'re':     re.compile(r'^\s*\d+\.\s'),
-                             'tag':    'ol'},
+        'code_block':   re.compile(r'^```\w*$'),
+        'ul':           re.compile(r'^\s*[\*-]\s'),
+        'ol':           re.compile(r'^\s*\d+\.\s'),
         # Inline
-        'strong':           {'re':     re.compile(r'^\*\*'),
-                             'tag':    'strong'},
-        'em':               {'re':     re.compile(r'^\*(?!\*)'),
-                             'tag':    'em'},
-        'code':             {'re':     re.compile(r'^`(?!`)'),
-                             'tag':    'code'},
-        'link':             {'re':     re.compile(r'^\[[^\[\]]+]\([^()]+\)'),
-                             'tag':    'a'},
-        'image':            {'re':     re.compile(r'^\[![^\[\]]+]\([^()]+\)$'),
-                             'tag':    'img'},
+        'strong':       re.compile(r'^\*\*'),
+        'em':           re.compile(r'^\*(?!\*)'),
+        'code':         re.compile(r'^`(?!`)'),
+        'link':         re.compile(r'^\[[^\[\]]+]\([^()]+\)'),
+        'image':        re.compile(r'^\[![^\[\]]+]\([^()]+\)$'),
         # Tables
-        'table_div':        {'re':     re.compile(r'^---(\s\|\s---)+$'),
-                             'tag':    'table'},
-        'table_row':        {'re':     re.compile(r'^[\w\s]+((\s\|\s)[^|]+[^\s|])+$'),
-                             'tag':    'tr',
-                             'header': 'th'},
+        'table_div':    re.compile(r'^---(\s\|\s---)+$'),
+        'table_row':    re.compile(r'^[^|]+((\s\|\s).+[^\s|])+$'),
     }
 
     def __init__(self):
@@ -100,7 +88,7 @@ class MarkdownParser:
             i += 1
 
     def line_is(self, element: str, line: str):
-        return self.elements[element]['re'].search(line)
+        return self.elements[element].search(line)
 
     def use_header(self, header: str):
         header_tag = self.get_header_depth(header)
@@ -117,7 +105,7 @@ class MarkdownParser:
 
     def get_header_depth(self, header: str):
         # find how many hashes there are
-        header_depth = self.elements['header']['re'].search(header).span()[1]
+        header_depth = self.elements['header'].search(header).span()[1]
         # return formatted string of element name
         return 'h' + str(header_depth)
 
@@ -129,7 +117,7 @@ class MarkdownParser:
         self.use_el('img', {'src': src, 'alt': alt, 'title': alt}, True)
 
     def get_link(self, line: str) -> str:
-        return self.elements['link']['re'].search(line).group()
+        return self.elements['link'].search(line).group()
 
     def use_link(self, link: str):
         link = link[1:-1]  # [ ... )
@@ -182,7 +170,7 @@ class MarkdownParser:
         self.list_depth = current_indent
 
         # get text content
-        text = self.elements[list_type]['re'].split(li.lstrip())[1]
+        text = self.elements[list_type].split(li.lstrip())[1]
         # create li element with text content
         self.use_el('li')
         self.parse_inline(text)
