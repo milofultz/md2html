@@ -1,4 +1,5 @@
 import re
+import sys
 
 
 class MarkdownParser:
@@ -219,3 +220,18 @@ class MarkdownParser:
         if self.current_line:
             self.output.append(self.current_line)
             self.current_line = ''
+
+
+if __name__ == '__main__':
+    if len(sys.argv) != 3:
+        sys.exit('Please provide an in and out filepath.')
+
+    _, in_fp, out_fp = sys.argv
+    markdown_parser = MarkdownParser()
+
+    with open(in_fp, 'r') as markdown:
+        parsed_markdown = markdown_parser.parse(markdown.read())
+    with open(out_fp, 'w') as html:
+        html.write(parsed_markdown)
+
+    print(f'{in_fp}:markdown --> {out_fp}:html')
