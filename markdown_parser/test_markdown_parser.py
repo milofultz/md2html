@@ -246,6 +246,64 @@ class TestMarkdownParserBlocks(unittest.TestCase):
 
         self.assertEqual(html_code, self.md_parser.parse(md_code))
 
+class TestMarkdownParserCombined(unittest.TestCase):
+    def setUp(self):
+        self.md_parser = MarkdownParser()
+
+    def test_all_types(self):
+        md_code = dedent('''\
+          # Header
+
+          This should be a **paragraph**, with some *italics*, as well.
+
+          What if you wanted to [go to the *store*?](https://www.youtube.com/watch?v=iRZ2Sh5-XuM)
+
+          ```css
+          body {
+            color: black;
+          }
+          ```
+
+          ---
+
+          That should have shown some CSS regarding the `body` and changing the text `color`.
+
+          ## List of things this can do so far
+
+          1. Blocks
+            * Headers
+            * Paragraphs
+            * Stuff
+          1. Formatting
+            - Strong
+            - Code
+              1. Inline
+              5. Block
+          1. Data
+
+          Table | Header | Row
+          --- | --- | ---
+          Cell 1 | Cell2 | Cell 3 || with pipes
+
+          [!Cat](http://1.bp.blogspot.com/-Flgz-X52Sa8/T-xaP9vmUZI/AAAAAAAABBg/B8pL7lpfd8w/s1600/newsitemoet.jpeg)''')
+        html_code = dedent('''\
+          <h1>Header</h1>
+          <p>This should be a <strong>paragraph</strong>, with some <em>italics</em>, as well.</p>
+          <p>What if you wanted to <a href="https://www.youtube.com/watch?v=iRZ2Sh5-XuM">go to the <em>store</em>?</a></p>
+          <pre data-code-lang="css">body {
+            color: black;
+          }
+          </pre>
+          <hr />
+          <p>That should have shown some CSS regarding the <code>body</code> and changing the text <code>color</code>.</p>
+          <h2>List of things this can do so far</h2>
+          <ol><li>Blocks<ul><li>Headers</li><li>Paragraphs</li><li>Stuff</li></ul></li><li>Formatting<ul><li>Strong</li><li>Code<ol><li>Inline</li><li>Block</li></ol></li></ul></li><li>Data</li></ol>
+          <table><thead><tr><th scope="col">Table</th><th scope="col">Header</th><th scope="col">Row</th></tr></thead><tbody><tr><td>Cell 1</td><td>Cell2</td><td>Cell 3 || with pipes</td></tr></tbody></table>
+          <img src="http://1.bp.blogspot.com/-Flgz-X52Sa8/T-xaP9vmUZI/AAAAAAAABBg/B8pL7lpfd8w/s1600/newsitemoet.jpeg" alt="Cat" title="Cat" />''')
+
+        self.assertEqual(html_code, self.md_parser.parse(md_code))
+
+
 
 if __name__ == '__main__':
     unittest.main()
