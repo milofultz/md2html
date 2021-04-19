@@ -79,6 +79,9 @@ class TestMarkdownParserBlocks(unittest.TestCase):
     def setUp(self):
         self.md_parser = MarkdownParser()
 
+    def test_horizontal_rule(self):
+        self.assertEqual('<hr />', self.md_parser.parse('---'))
+
     def test_code_block(self):
         md_code = dedent('''\
             ```

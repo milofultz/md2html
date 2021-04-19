@@ -5,6 +5,7 @@ class MarkdownParser:
     elements = {
         # Whole line
         'header':       re.compile(r'^#+'),
+        'hr':           re.compile(r'^--(-){1,}$'),
         # Block
         'code_block':   re.compile(r'^```\w*$'),
         'ul':           re.compile(r'^\s*[\*-]\s'),
@@ -58,6 +59,8 @@ class MarkdownParser:
             self.use_code_block(line)
         elif self.line_is('table_row', line):
             self.use_table(line)
+        elif self.line_is('hr', line):
+            self.use_el('hr', None, True)
         elif self.line_is('ul', line):
             self.use_list('ul', line)
         elif self.line_is('ol', line):
