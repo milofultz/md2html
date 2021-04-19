@@ -8,20 +8,25 @@ This is the part that takes in markdown and outputs valid HTML. As of now, it's 
 
 * Headers
 * Paragraphs (with line breaks, if on adjacent lines)
-* Code (triple backticks and indented 4 spaces)
-* Images (block only, no inline)
-* Horizontal rules
+* Code (triple backticks or indented 4 spaces)
+* Images (`[!alt text](url)`)
+  * block only, no inline images
+* Horizontal rules (`---` or more, if you want)
 
 ### Inline Formatting
 
 * Strong (`**`)
-* Emphasis
-* Links
+* Emphasis (`*`)
+* Links (`[text](url)`)
+* Code (backticks)
 
 ### Data
 
 * Lists
-  * 2 space indents
-  * Ordered and unordered
-  * Hyphens or asterisks for unordered
-* Tables (with a header row only, normal markdown)
+  * 2 spaces per indent
+  * Ordered (`1.`, `42.`, etc.) and unordered (`*` or `-`)
+* Tables (with a header row only, minimal markdown)
+  * cols always separated by ` | `
+  * first line is headers
+  * second line is `---` followed by ` | ---` (rows - 1) times (e.g. 3 cols = `--- | --- | ---`)
+  * each subsequent line is a row
