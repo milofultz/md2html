@@ -66,7 +66,9 @@ class MarkdownParser:
 
         line = line.rstrip()
 
-        if self.line_is('header', line):
+        if not line:
+            self.reset_element_trace()
+        elif self.line_is('header', line):
             self.use_header(line)
         elif self.line_is('image', line):
             self.use_image(line)
