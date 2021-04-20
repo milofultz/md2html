@@ -288,7 +288,8 @@ class MarkdownParser:
             self.output.append(self.current_line)
             self.current_line = ''
 
-    def html_escape(self, line):
+    @staticmethod
+    def html_escape(line):
         escape_chars = {'&': '&amp;', '<': '&lt;', '>': '&gt;'}
         escaped = ''
         for char in line:
