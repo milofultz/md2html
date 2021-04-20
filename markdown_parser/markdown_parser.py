@@ -85,7 +85,7 @@ class MarkdownParser:
         elif self.line_is('table_row', line):
             self.use_table(line)
         elif self.line_is('hr', line):
-            self.use_el('hr', None, True)
+            self.use_el('hr', {'_nothing': True})
         else:
             self.use_paragraph(line)
 
@@ -136,7 +136,7 @@ class MarkdownParser:
         image = image[2:-1]  # ![ ... ]
         alt, src = image.split('](')
         # Self closing tag
-        self.use_el('img', {'src': src, 'alt': alt, 'title': alt}, True)
+        self.use_el('img', {'_nothing': True, 'src': src, 'alt': alt, 'title': alt})
 
     def get_link(self, line: str) -> str:
         if line[0] == '<':
@@ -176,7 +176,7 @@ class MarkdownParser:
             self.use_el('tr')
             cells = line.split(' | ')
             for cell in cells:
-                self.use_el('th', {'_content': self.html_escape(cell), 'scope': 'col'})
+                self.use_el('th', {'scope': 'col', '_content': self.html_escape(cell)})
             self.use_el('tr')
             self.use_el('thead')
         # if dividing line
@@ -225,30 +225,44 @@ class MarkdownParser:
         if self.element_stack[-1] != 'p':
             self.current_line += self.open_el('p')
         else:
-            self.use_el('br', None, True)
+            self.use_el('br', {'_nothing': True})
         self.parse_inline(text)
 
-    def use_el(self, element: str, options: dict = None, self_closing=False):
-        if options is not None and options.get('_content'):
-            options_no_content = {k: options[k] for k in options if k != '_content'}
-            self.current_line += self.open_el(element, options_no_content)
-            self.parse_inline(options['_content'])
-            self.current_line += self.close_el(element)
+    def use_el(self, element: str, options: dict = None):
+        """Create an HTML element.
+
+        Arguments:
+        element -- Name of element (e.g. 'h1')
+        options -- dict of attributes and meta options:
+            _nothing: bool -- Is "nothing" element (e.g. 'br', 'hr')
+            _content: str  -- Text contents of element
+            <any>: str     -- Attribute: value (true means boolean attr)
+        """
+        if options is not None:
+            options_no_meta = {k: options[k] for k in options if k[0] != '_'}
+            self.current_line += self.open_el(element, options_no_meta)
+            if options.get('_content'):
+                self.parse_inline(options['_content'])
+                self.current_line += self.close_el(element)
+            if options.get('_nothing'):
+                self.element_stack.pop()
         elif self.element_stack[-1] != element:
-            self.current_line += self.open_el(element, options, self_closing)
+            self.current_line += self.open_el(element, options)
         else:
             self.current_line += self.close_el(element)
 
-    def open_el(self, element: str, options: dict = None, self_closing=False):
+    def open_el(self, element: str, options: dict = None):
         self.element_stack.append(element)
+        if options is None:
+            options = {}
         attributes = ''
-        if options:
-            for attr, value in options.items():
+        for attr, value in options.items():
+            # HTML boolean attributes
+            if type(value) == bool:
+                attributes += f' {attr}'
+            else:
                 attributes += f' {attr}="{value}"'
         suffix = '>'
-        if self_closing:
-            suffix = ' />'
-            self.element_stack.pop()
         return '<' + element + attributes + suffix
 
     def close_el(self, element: str):

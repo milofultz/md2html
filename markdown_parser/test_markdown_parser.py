@@ -9,7 +9,7 @@ class TestMarkdownParserWhitespace(unittest.TestCase):
         self.md_parser = MarkdownParser()
 
     def test_adjacent_lines(self):
-        self.assertEqual('<p>Hello<br />World<br />Test</p>', self.md_parser.parse(dedent('''\
+        self.assertEqual('<p>Hello<br>World<br>Test</p>', self.md_parser.parse(dedent('''\
             Hello
             World
             Test''')))
@@ -84,7 +84,7 @@ class TestMarkdownParserSingleLines(unittest.TestCase):
 
     def test_image(self):
         # Won't do inline images, only as whole line
-        self.assertEqual('<img src="https://duckduckgo.com/assets/logo_homepage.alt.v108.svg" alt="The whole line" title="The whole line" />',
+        self.assertEqual('<img src="https://duckduckgo.com/assets/logo_homepage.alt.v108.svg" alt="The whole line" title="The whole line">',
                          self.md_parser.parse('![The whole line](https://duckduckgo.com/assets/logo_homepage.alt.v108.svg)'))
 
 
@@ -93,7 +93,7 @@ class TestMarkdownParserBlocks(unittest.TestCase):
         self.md_parser = MarkdownParser()
 
     def test_horizontal_rule(self):
-        self.assertEqual('<hr />', self.md_parser.parse('---'))
+        self.assertEqual('<hr>', self.md_parser.parse('---'))
 
     def test_code_block(self):
         md_code = dedent('''\
@@ -358,12 +358,12 @@ class TestMarkdownParserCombined(unittest.TestCase):
             color: black;
           }
           </pre>
-          <hr />
+          <hr>
           <p>That should have shown some CSS regarding the <code>body</code> and changing the text <code>color</code>.</p>
           <h2>List of things this can do so far</h2>
           <ol><li>Blocks<ul><li>Headers</li><li>Paragraphs</li><li>Stuff</li></ul></li><li>Formatting<ul><li>Strong</li><li>Code<ol><li>Inline</li><li>Block</li></ol></li></ul></li><li>Data</li></ol>
           <table><thead><tr><th scope="col">Table</th><th scope="col">Header</th><th scope="col">Row</th></tr></thead><tbody><tr><td>Cell 1</td><td>Cell2</td><td>Cell 3 || with pipes</td></tr></tbody></table>
-          <img src="http://1.bp.blogspot.com/-Flgz-X52Sa8/T-xaP9vmUZI/AAAAAAAABBg/B8pL7lpfd8w/s1600/newsitemoet.jpeg" alt="Cat" title="Cat" />''')
+          <img src="http://1.bp.blogspot.com/-Flgz-X52Sa8/T-xaP9vmUZI/AAAAAAAABBg/B8pL7lpfd8w/s1600/newsitemoet.jpeg" alt="Cat" title="Cat">''')
 
         self.assertEqual(html_code, self.md_parser.parse(md_code))
 
