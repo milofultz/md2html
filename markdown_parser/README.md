@@ -1,8 +1,8 @@
 # Markdown Parser
 
-This is the part that takes in markdown and outputs valid HTML. As of now, it's buggy, as I need more tests, but it works for real basic stuff.
+This is the part that takes in markdown and outputs valid HTML.
 
-## Currently supports:
+## Currently Supports:
 
 ### Blocks
 
@@ -15,27 +15,33 @@ This is the part that takes in markdown and outputs valid HTML. As of now, it's 
 
 ### Inline Formatting
 
-* Strong (`**`)
-* Emphasis (`*`)
-* Links (`[text](url)`)
-* Simple links (`<url>`)
-* Code (backticks)
+* Strong (`This should be **bold**`)
+  * This should be **bold**.
+* Emphasis (`This is *emphasized*`)
+  * This is *emphasized*.
+* Links (`[Example.com](http://www.example.com)`)
+  * [Example.com](http://www.example.com)
+* Simple links (`<http://www.example.com>`)
+  * <http://www.example.com>
+* Code (`backticks`)
+* Checkboxes (`[ ] Do the thing` or `[x] I did the thing`)
+  * [ ] Do the thing
+  * [x] I did the thing
 
 ### Data
 
-* Lists
-  * 2 spaces per indent
-  * Ordered (`1.`, `42.`, etc.) and unordered (`*` or `-`)
-* Tables (with a header row only, minimal markdown)
-  * cols always separated by ` | `
-  * first line is headers
-  * second line is `---` followed by ` | ---` (rows - 1) times (e.g. 3 cols = `--- | --- | ---`)
-  * each subsequent line is a row
+- Lists
+  - 2 spaces per indent
+  - Ordered (`1.`, `42.`, etc.) and unordered (`*` or `-`)
+- Tables (with a header row only, minimal markdown)
+  - cols always separated by ` | `
+  - first line is headers
+  - second line is `---` followed by ` | ---` (rows - 1) times (e.g. 3 cols = `--- | --- | ---`)
+  - each subsequent line is a row
 
 ## Future:
 
-* Strikethrough (`~~`)
-* Blockquote (`> `)
-* Checkboxes (`- [ ]`, `- [x]`)
-
-- [ ] 
+1. Strikethrough (`~~`)
+1. Blockquote (`> `)
+1. Escape backtick with forward slash
+1. Triple backticks inline
