@@ -36,3 +36,6 @@ This is the part that takes in markdown and outputs valid HTML. As of now, it's 
 
 * Strikethrough (`~~`)
 * Blockquote (`> `)
+* Checkboxes (`- [ ]`, `- [x]`)
+
+- [ ] 

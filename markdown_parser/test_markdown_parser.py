@@ -284,6 +284,16 @@ class TestMarkdownParserBlocks(unittest.TestCase):
 
         self.assertEqual(html_code, self.md_parser.parse(md_code))
 
+    def test_checkboxes(self):
+        md_code = dedent('''
+            - [ ] Unchecked
+            - [x] Checked
+              - [X] Checked, too!
+            ''')
+        html_code = '<ul><li><input type="checkbox">&nbsp;Unchecked</li><li><input type="checkbox" checked>&nbsp;Checked<ul><li><input type="checkbox" checked>&nbsp;Checked, too!</li></ul></li></ul>'
+
+        self.assertEqual(html_code, self.md_parser.parse(md_code))
+
     def test_tables(self):
         md_code = dedent('''\
             this | is a | header
