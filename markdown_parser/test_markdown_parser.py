@@ -111,6 +111,22 @@ class TestMarkdownParserBlocks(unittest.TestCase):
             </pre>''')
         self.assertEqual(html_code, self.md_parser.parse(md_code))
 
+    def test_code_block_lang(self):
+        md_code = dedent('''\
+            ```css
+            This is some code
+            that should be wrapped
+            into one chunk
+            [This shouldn't be parsed](google.com)
+            ```''')
+        html_code = dedent('''\
+            <pre data-code-lang="css">This is some code
+            that should be wrapped
+            into one chunk
+            [This shouldn't be parsed](google.com)
+            </pre>''')
+        self.assertEqual(html_code, self.md_parser.parse(md_code))
+
     def test_code_block_indent(self):
         md_code = dedent('''\
                 This is some code
