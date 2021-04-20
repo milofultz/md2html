@@ -19,6 +19,8 @@ This is the part that takes in markdown and outputs valid HTML.
   * This should be **bold**.
 * Emphasis (`This is *emphasized*`)
   * This is *emphasized*.
+* Strikethrough (`This is ~~strikethrough~~`)
+  * This is ~~strikethrough~~.
 * Links (`[Example.com](http://www.example.com)`)
   * [Example.com](http://www.example.com)
 * Simple links (`<http://www.example.com>`)
@@ -41,7 +43,6 @@ This is the part that takes in markdown and outputs valid HTML.
 
 ## Future:
 
-1. Strikethrough (`~~`)
 1. Blockquote (`> `)
 1. Escape backtick with forward slash
 1. Triple backticks inline

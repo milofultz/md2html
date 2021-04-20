@@ -16,6 +16,7 @@ class MarkdownParser:
         # Inline
         'strong':               re.compile(r'^\*\*'),
         'em':                   re.compile(r'^\*(?!\*)'),
+        'strikethrough':        re.compile(r'^~~'),
         'code':                 re.compile(r'^`(?!`)'),
         'link':                 re.compile(r'^\[[^\[\]]+]\([^()]+\)'),
         'link_simple':          re.compile(r'^<\S+\.\S+>'),
@@ -108,6 +109,9 @@ class MarkdownParser:
                 i += 1  # **
             elif self.line_is('em', line[i:]):
                 self.use_el('em')
+            elif self.line_is('strikethrough', line[i:]):
+                self.use_el('s')
+                i += 1  # **
             elif self.line_is('code', line[i:]):
                 self.code = True
                 self.use_el('code')

@@ -55,6 +55,13 @@ class TestMarkdownParserSingleLines(unittest.TestCase):
         self.assertEqual('<p>Somewhere in the <em>middle</em> of the line</p>',
                          self.md_parser.parse('Somewhere in the *middle* of the line'))
 
+    def test_strikethrough(self):
+        self.assertEqual('<p><s>The whole line</s></p>', self.md_parser.parse('~~The whole line~~'))
+
+    def test_strikethrough_inline(self):
+        self.assertEqual('<p>Somewhere in the <s>middle</s> of the line</p>',
+                         self.md_parser.parse('Somewhere in the ~~middle~~ of the line'))
+
     def test_code(self):
         self.assertEqual('<p><code>The whole line</code></p>', self.md_parser.parse('`The whole line`'))
 
