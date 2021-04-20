@@ -290,7 +290,7 @@ class TestMarkdownParserBlocks(unittest.TestCase):
             - [x] Checked
               - [X] Checked, too!
             ''')
-        html_code = '<ul><li><input type="checkbox">&nbsp;Unchecked</li><li><input type="checkbox" checked>&nbsp;Checked<ul><li><input type="checkbox" checked>&nbsp;Checked, too!</li></ul></li></ul>'
+        html_code = '<ul><li><input type="checkbox"> Unchecked</li><li><input type="checkbox" checked> Checked<ul><li><input type="checkbox" checked> Checked, too!</li></ul></li></ul>'
 
         self.assertEqual(html_code, self.md_parser.parse(md_code))
 

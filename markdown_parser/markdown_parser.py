@@ -10,6 +10,7 @@ class MarkdownParser:
         # Block
         'code_block':           re.compile(r'^`{3}\w*$'),
         'code_block_indent':    re.compile(r'^\s{4}'),
+        'checkbox':             re.compile(r'^\[[\sxX]]\s'),
         'ul':                   re.compile(r'^\s*[*-]\s'),
         'ol':                   re.compile(r'^\s*\d+\.\s'),
         # Inline
@@ -114,6 +115,9 @@ class MarkdownParser:
                 link = self.get_link(line[i:])
                 self.use_link(link)
                 i += len(link) - 1  # go to end of link inline
+            elif self.line_is('checkbox', line[i:]):
+                self.use_checkbox(line[i:4])
+                i += 2  # '[ ] '
             else:
                 self.current_line += self.html_escape(line[i])
             i += 1
@@ -152,6 +156,12 @@ class MarkdownParser:
             link = link[1:-1]  # [ ... )
             text, href = link.split('](')
             self.use_el('a', {'href': href, '_content': self.html_escape(text)})
+
+    def use_checkbox(self, checkbox: str):
+        options = {'type': 'checkbox', '_nothing': True}
+        if checkbox.lower() == '[x] ':
+            options['checked'] = True
+        self.use_el('input', options)
 
     def use_code_block(self, code_block: str):
         # Indent block
