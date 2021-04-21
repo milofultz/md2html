@@ -43,5 +43,4 @@ This is the part that takes in markdown and outputs valid HTML.
 
 ## Future:
 
-1. Escape backtick with forward slash
-1. Triple backticks inline
+1. Triple backticks inline to escape backticks
