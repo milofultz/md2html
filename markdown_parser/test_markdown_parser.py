@@ -26,7 +26,8 @@ class TestMarkdownParserWhitespace(unittest.TestCase):
             Test''')))
 
     def test_html_escaping(self):
-        self.assertEqual('<p>Me &amp; Bobby McGee &lt;&gt;</p>', self.md_parser.parse('Me & Bobby McGee <>'))
+        self.assertEqual('<p>Me &amp; Bobby McGee &lt;&gt;</p>',
+                         self.md_parser.parse('Me & Bobby McGee <>'))
 
 
 class TestMarkdownParserSingleLines(unittest.TestCase):
@@ -178,6 +179,17 @@ class TestMarkdownParserBlocks(unittest.TestCase):
              a
             </pre>
             <p>reference</p>''')
+        self.assertEqual(html_code, self.md_parser.parse(md_code))
+
+    def test_blockquote(self):
+        self.assertEqual('<blockquote><p>This is a whole line.</p></blockquote>',
+                         self.md_parser.parse('> This is a whole line.'))
+
+    def test_blockquote_multiline(self):
+        md_code = dedent('''\
+            > This is a quote
+            > that spans two lines''')
+        html_code = '<blockquote><p>This is a quote that spans two lines</p></blockquote>'
         self.assertEqual(html_code, self.md_parser.parse(md_code))
 
     def test_unordered_list_asterisk(self):
