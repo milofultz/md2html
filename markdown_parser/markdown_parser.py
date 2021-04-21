@@ -8,6 +8,7 @@ class MarkdownParser:
         'header':               re.compile(r'^#+'),
         'hr':                   re.compile(r'^--(-){1,}$'),
         # Block
+        'blockquote':           re.compile(r'^>(?!>).*'),  # match only one
         'code_block':           re.compile(r'^`{3}\w*$'),
         'code_block_indent':    re.compile(r'^\s{4}'),
         'checkbox':             re.compile(r'^\[[\sxX]]\s'),
@@ -31,6 +32,7 @@ class MarkdownParser:
         self.element_stack = []
         self.current_line = ''
         self.output = []
+        self.blockquote = False
         self.code = False
         self.pre = False
         self.pre_indent = False
@@ -41,6 +43,7 @@ class MarkdownParser:
         self.element_stack = ['ROOT']
         self.current_line = ''
         self.output = []
+        self.blockquote = False
         self.code = False
         self.pre = False
         self.pre_indent = False
@@ -88,6 +91,8 @@ class MarkdownParser:
             self.use_table(line)
         elif self.line_is('hr', line):
             self.use_el('hr', {'_nothing': True})
+        elif self.line_is('blockquote', line):
+            self.use_blockquote(line)
         else:
             self.use_paragraph(line)
 
@@ -202,6 +207,16 @@ class MarkdownParser:
             for cell in cells:
                 self.use_el('td', {'_content': self.html_escape(cell)})
             self.use_el('tr')
+
+    def use_blockquote(self, line: str):
+        if not self.blockquote:
+            self.blockquote = True
+            self.use_el('blockquote')
+            self.use_el('p')
+            line = line[2:]
+        else:
+            line = ' ' + line[2:]
+        self.parse_inline(line)
 
     def use_list(self, list_type: str, li: str):
         current_indent = (len(li) - len(li.lstrip())) // self.list_indent_interval

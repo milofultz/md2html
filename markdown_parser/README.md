@@ -6,11 +6,11 @@ This is the part that takes in markdown and outputs valid HTML.
 
 ### Blocks
 
-* Headers
+* Headers (`# Header`)
 * Paragraphs (with line breaks, if on adjacent lines)
 * Code (triple backticks or indented 4 spaces)
-* Images (`![alt text](url)`)
-  * block only, no inline images
+* Images (`![alt text](url)`, block only, no inline images)
+* Blockquote (`> Text`)
 * Horizontal rules (`---` or more, if you want)
 
 ### Inline Formatting
@@ -39,10 +39,9 @@ This is the part that takes in markdown and outputs valid HTML.
   - cols always separated by ` | `
   - first line is headers
   - second line is `---` followed by ` | ---` (rows - 1) times (e.g. 3 cols = `--- | --- | ---`)
-  - each subsequent line is a row
+  - each subsequent line is a row 
 
 ## Future:
 
-1. Blockquote (`> `)
 1. Escape backtick with forward slash
 1. Triple backticks inline
