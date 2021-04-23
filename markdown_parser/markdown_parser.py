@@ -147,10 +147,7 @@ class MarkdownParser:
 
     def use_header(self, header: str):
         header_tag = self.get_header_depth(header)
-        self.use_el(header_tag)
-        text = re.split('^#+', header)[1].strip()
-        self.parse_inline(text)
-        self.use_el(header_tag)
+        self.use_el(header_tag, {'_content': re.split('^#+', header)[1].strip()})
 
     def get_header_depth(self, header: str):
         header_depth = self.elements['header'].search(header).span()[1]
