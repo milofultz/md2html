@@ -41,3 +41,7 @@ This is the part that takes in markdown and outputs valid HTML. README.html in t
   - second line is `---` followed by ` | ---` (rows - 1) times (e.g. 3 cols = `--- | --- | ---`)
   - each subsequent line is a row 
   
+
+## Future:
+
+- Add class to list with inputs to more easily remove list styles and remove padding/margin, etc.
