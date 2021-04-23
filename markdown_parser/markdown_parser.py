@@ -42,6 +42,14 @@ class MarkdownParser:
 
     def parse(self, markdown):
         # Set up vars
+        self.set_up()
+
+        for line in markdown.split('\n'):
+            self.parse_line(line)
+        self.reset_element_stack()
+        return '\n'.join(self.output)
+
+    def set_up(self):
         self.element_stack = ['ROOT']
         self.current_line = ''
         self.output = []
@@ -52,16 +60,11 @@ class MarkdownParser:
         self.pre_indent = False
         self.list_depth = 0
 
-        for line in markdown.split('\n'):
-            self.parse_line(line)
-        self.reset_element_trace()
-        return '\n'.join(self.output)
-
     def parse_line(self, line):
         if self.pre:
             if self.line_is('code_block', line):
                 self.pre = False
-                self.reset_element_trace()
+                self.reset_element_stack()
                 return
             else:
                 self.current_line += line + '\n'
@@ -69,7 +72,7 @@ class MarkdownParser:
         elif self.pre_indent:
             if line[:4] != '    ':
                 self.pre_indent = False
-                self.reset_element_trace()
+                self.reset_element_stack()
                 # Continue to parse current line normally
             else:
                 self.current_line += line[4:] + '\n'
@@ -78,7 +81,7 @@ class MarkdownParser:
         line = line.rstrip()
 
         if not line:
-            self.reset_element_trace()
+            self.reset_element_stack()
             self.list_depth = 0
         elif self.line_is('header', line):
             self.use_header(line)
@@ -306,7 +309,7 @@ class MarkdownParser:
         self.element_stack.pop()
         return '</' + element + '>'
 
-    def reset_element_trace(self):
+    def reset_element_stack(self):
         for element in reversed(self.element_stack):
             if element == 'ROOT':
                 break
