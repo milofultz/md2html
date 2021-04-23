@@ -1,6 +1,6 @@
 # Markdown Parser
 
-This is the part that takes in markdown and outputs valid HTML.
+This is the part that takes in markdown and outputs valid HTML. README.html in this folder was generated using the program, so it's a fairly straightforward example.
 
 ## Currently Supports:
 
@@ -25,7 +25,7 @@ This is the part that takes in markdown and outputs valid HTML.
   * [Example.com](http://www.example.com)
 * Simple links (`<http://www.example.com>`)
   * <http://www.example.com>
-* Code (`backticks`)
+* Code (`backticks` and ```triple backticks to escape `single` backticks```)
 * Checkboxes (`[ ] Do the thing` or `[x] I did the thing`)
   * [ ] Do the thing
   * [x] I did the thing
@@ -40,7 +40,4 @@ This is the part that takes in markdown and outputs valid HTML.
   - first line is headers
   - second line is `---` followed by ` | ---` (rows - 1) times (e.g. 3 cols = `--- | --- | ---`)
   - each subsequent line is a row 
-
-## Future:
-
-1. Triple backticks inline to escape backticks
+  
