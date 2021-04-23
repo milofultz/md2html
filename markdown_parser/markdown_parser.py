@@ -146,32 +146,22 @@ class MarkdownParser:
         return self.elements[element].search(line)
 
     def use_header(self, header: str):
-        header_tag = self.get_header_depth(header)
-        self.use_el(header_tag, {'_content': re.split('^#+', header)[1].strip()})
-
-    def get_header_depth(self, header: str):
-        header_depth = self.elements['header'].search(header).span()[1]
-        return 'h' + str(header_depth)
+        level = str(self.elements['header'].search(header).span()[1])
+        self.use_el(f'h{level}', {'_content': header.replace('#', '').lstrip()})
 
     def use_image(self, image: str):
-        image = image[2:-1]  # ![ ... ]
-        alt, src = image.split('](')
-        # Self closing tag
+        alt, src = image[2:-1].split('](')  # ![ ... ]
         self.use_el('img', {'_nothing': True, 'src': src, 'alt': alt, 'title': alt})
 
     def get_link(self, line: str) -> str:
-        if line[0] == '<':
-            return self.elements['link_simple'].search(line).group()
-        else:
-            return self.elements['link'].search(line).group()
+        link_type = 'link_simple' if line[0] == '<' else 'link'
+        return self.elements[link_type].search(line).group()
 
     def use_link(self, link: str):
         if link[0] == '<':
-            link = self.html_escape(link[1:-1])  # < ... >
-            self.use_el('a', {'href': link, '_content': link})
+            self.use_el('a', {'href': link[1:-1], '_content': self.html_escape(link[1:-1])})  # < ... >
         else:
-            link = link[1:-1]  # [ ... )
-            text, href = link.split('](')
+            text, href = link[1:-1].split('](')
             self.use_el('a', {'href': href, '_content': self.html_escape(text)})
 
     def use_checkbox(self, checkbox: str):
@@ -186,14 +176,13 @@ class MarkdownParser:
             self.pre_indent = True
             self.use_el('pre')
             self.current_line += self.html_escape(code_block[4:]) + '\n'
-            return
-
         # Triple backticks
-        self.pre = True
-        if code_block[3:]:
-            self.use_el('pre', {'data-code-lang': self.html_escape(code_block[3:])})
         else:
-            self.use_el('pre')
+            self.pre = True
+            options = {}
+            if code_block[3:]:
+                options['data-code-lang'] = self.html_escape(code_block[3:])
+            self.use_el('pre', options)
 
     def use_table(self, line: str):
         # instantiating the table if first table line seen
@@ -201,18 +190,15 @@ class MarkdownParser:
             self.use_el('table')
             self.use_el('thead')
             self.use_el('tr')
-            cells = line.split(' | ')
-            for cell in cells:
+            for cell in line.split(' | '):
                 self.use_el('th', {'scope': 'col', '_content': self.html_escape(cell)})
             self.use_el('tr')
             self.use_el('thead')
-        # if dividing line
         elif self.line_is('table_div', line):
             self.use_el('tbody')
         else:
             self.use_el('tr')
-            cells = line.split(' | ')
-            for cell in cells:
+            for cell in line.split(' | '):
                 self.use_el('td', {'_content': self.html_escape(cell)})
             self.use_el('tr')
 
@@ -232,21 +218,21 @@ class MarkdownParser:
         if current_indent > self.list_depth:
             first = True
             while current_indent > self.list_depth:
-                self.list_depth += 1
                 self.use_el(list_type)
                 if not first:
                     self.use_el('li')
                     continue
                 first = False
+                self.list_depth += 1
         elif current_indent < self.list_depth:
             first = True
             while current_indent < self.list_depth:
-                self.list_depth -= 1
                 if first:
                     self.use_el('li')
                     first = False
                 self.use_el(self.element_stack[-1])
                 self.use_el('li')
+                self.list_depth -= 1
         elif self.element_stack[-1] not in [list_type, 'li']:
             self.use_el(list_type)
         else:
@@ -275,11 +261,11 @@ class MarkdownParser:
             _content: str  -- Text contents of element
             <any>: str     -- Attribute: value (true means boolean attr)
         """
-        if options is not None:
-            options_no_meta = {k: options[k] for k in options if k[0] != '_'}
-            self.current_line += self.open_el(element, options_no_meta)
-            if options.get('_content'):
-                self.parse_inline(options['_content'])
+        if options:
+            attributes = {key: options[key] for key in options if key[0] != '_'}
+            self.current_line += self.open_el(element, attributes)
+            if content := options.get('_content'):
+                self.parse_inline(content)
                 self.current_line += self.close_el(element)
             if options.get('_nothing'):
                 self.element_stack.pop()
@@ -294,13 +280,11 @@ class MarkdownParser:
             options = {}
         attributes = ''
         for attr, value in options.items():
-            # HTML boolean attributes
-            if type(value) == bool:
-                attributes += f' {attr}'
-            else:
-                attributes += f' {attr}="{value}"'
-        suffix = '>'
-        return '<' + element + attributes + suffix
+            attributes += f' {attr}'
+            # If not HTML5 boolean attribute
+            if type(value) == str:
+                attributes += f'="{value}"'
+        return '<' + element + attributes + '>'
 
     def close_el(self, element: str):
         self.element_stack.pop()
@@ -308,9 +292,8 @@ class MarkdownParser:
 
     def reset_element_stack(self):
         for element in reversed(self.element_stack):
-            if element == 'ROOT':
-                break
-            self.use_el(element)
+            if element != 'ROOT':
+                self.use_el(element)
         if self.current_line:
             self.output.append(self.current_line)
             self.current_line = ''
