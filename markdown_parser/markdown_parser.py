@@ -49,17 +49,6 @@ class MarkdownParser:
         self.reset_element_stack()
         return '\n'.join(self.output)
 
-    def set_up(self):
-        self.element_stack = ['ROOT']
-        self.current_line = ''
-        self.output = []
-        self.blockquote = False
-        self.code = False
-        self.code_triple = False
-        self.pre = False
-        self.pre_indent = False
-        self.list_depth = 0
-
     def parse_line(self, line):
         if self.pre:
             if self.line_is('code_block', line):
@@ -289,6 +278,17 @@ class MarkdownParser:
     def close_el(self, element: str):
         self.element_stack.pop()
         return '</' + element + '>'
+
+    def set_up(self):
+        self.element_stack = ['ROOT']
+        self.current_line = ''
+        self.output = []
+        self.blockquote = False
+        self.code = False
+        self.code_triple = False
+        self.pre = False
+        self.pre_indent = False
+        self.list_depth = 0
 
     def reset_element_stack(self):
         for element in reversed(self.element_stack):
