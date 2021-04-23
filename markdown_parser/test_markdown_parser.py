@@ -70,6 +70,10 @@ class TestMarkdownParserSingleLines(unittest.TestCase):
         self.assertEqual('<p>Somewhere in the <code>middle</code> of the line</p>',
                          self.md_parser.parse('Somewhere in the `middle` of the line'))
 
+    def test_code_inline_triple_backticks(self):
+        self.assertEqual('<p>Somewhere in the <code>middle **yeah** the middle</code> of the line</p>',
+                         self.md_parser.parse('Somewhere in the ```middle **yeah** the middle``` of the line'))
+
     def test_code_inline_no_inner_parse(self):
         self.assertEqual('<p><code>[middle](href.com)</code></p>',
                          self.md_parser.parse('`[middle](href.com)`'))
