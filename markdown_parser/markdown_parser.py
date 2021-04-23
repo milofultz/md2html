@@ -19,6 +19,7 @@ class MarkdownParser:
         'em':                   re.compile(r'^\*(?!\*)'),
         'strikethrough':        re.compile(r'^~~'),
         'code':                 re.compile(r'^`(?!`)'),
+        'code_triple':          re.compile(r'^`{3}'),
         'link':                 re.compile(r'^\[[^\[\]]+]\([^()]+\)'),
         'link_simple':          re.compile(r'^<\S+\.\S+>'),
         'image':                re.compile(r'^!\[[^\[\]]+]\([^()]+\)$'),
@@ -34,6 +35,7 @@ class MarkdownParser:
         self.output = []
         self.blockquote = False
         self.code = False
+        self.code_triple = False
         self.pre = False
         self.pre_indent = False
         self.list_depth = 0
@@ -45,6 +47,7 @@ class MarkdownParser:
         self.output = []
         self.blockquote = False
         self.code = False
+        self.code_triple = False
         self.pre = False
         self.pre_indent = False
         self.list_depth = 0
@@ -99,12 +102,13 @@ class MarkdownParser:
     def parse_inline(self, line: str):
         i = 0
         while i < len(line):
-            if self.code and self.line_is('code', line[i:]):
-                self.code = False
+            if (self.code and self.line_is('code', line[i:]) or
+                    self.code_triple and self.line_is('code_triple', line[i:])):
+                i += 1 if self.code else 3  # ```
+                self.code, self.code_triple = False, False
                 self.use_el('code')
-                i += 1
                 continue
-            elif self.code:
+            elif self.code or self.code_triple:
                 self.current_line += self.html_escape(line[i])
                 i += 1
                 continue
@@ -117,6 +121,10 @@ class MarkdownParser:
             elif self.line_is('strikethrough', line[i:]):
                 self.use_el('s')
                 i += 1  # **
+            elif self.line_is('code_triple', line[i:]):
+                self.code_triple = True
+                self.use_el('code')
+                i += 2  # ```
             elif self.line_is('code', line[i:]):
                 self.code = True
                 self.use_el('code')
