@@ -42,7 +42,7 @@ class TestTemplateInsertion(unittest.TestCase):
 
     def test_throw_on_missing_template_item(self):
         with self.assertRaises(Exception):
-            self.templater.fill_template('Replace {{ missing.dogdog }} with a dog.')
+            self.templater.fill_template('Replace {{ test.dogdog }} with a dog.')
 
     def test_html_insertion(self):
         self.assertEqual('<header><strong>This is the top</strong></header>', self.templater.fill_template('{{ test.header }}'))
