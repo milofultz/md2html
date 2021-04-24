@@ -10,5 +10,4 @@ Start a templater instance: `templater = Templater()`
 
 ## Future:
 
-* Recursively search for nested templates 
-  * e.g. in a page layout, could have `{{ template.header }}`, `{{ post.body }}`, and `{{ template.footer }}`. `{{ template.header }}` may contain meta tags that hold `{{ post.title }}` and `{{ post.description }}`. 
+* Set `page` as a reserved word that will be used in templating the meta of the page (title, desc, etc.)
