@@ -11,7 +11,7 @@ I like making things. I'm currently using Jekyll and I like it a lot! But I real
 ## Features
 
 * *Parse basic markdown to HTML* (in progress, see folder)
-* Basic CSS styling to make generated HTML look good
-* ~~Use templates for header/footer and navigation~~
+* *Basic CSS styling to make generated HTML look good* (in progress)
+* *Use templates for header/footer and navigation* (Basic templating complete))
 * ~~Config to provide context to all generated pages (CSS, meta, etc.)~~
 * ~~Generate RSS feed of all pages~~
