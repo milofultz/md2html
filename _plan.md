@@ -22,7 +22,8 @@
     * for each file in root folder
       * break out front matter, markdown and all templates 
       * parse markdown file
-      * parse templates
+      * prepare templates
+        * build out all templates using config, front-matter, etc. (e.g. 'head.template' may contain templates within it for the title and description from the front matter)
       * generate all necessary HTML
         * title (page name)
         * meta tags
