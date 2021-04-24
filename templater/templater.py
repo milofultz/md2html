@@ -15,6 +15,10 @@ class Templater:
             raise
         self.__templates[template_name] = template
 
+    def add_templates(self, templates: dict):
+        for template_name, template in templates.items():
+            self.add_template(template_name, template)
+
     def get_templates(self):
         return self.__templates
 

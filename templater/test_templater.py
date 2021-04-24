@@ -14,6 +14,11 @@ class TestAddTemplate(unittest.TestCase):
         with self.assertRaises(AttributeError):
             self.templater.__templates
 
+    def test_add_multiple_templates(self):
+        self.templater.add_templates({'test': {'a': 'z'}, 'another': {'123': '456'}})
+        self.assertEqual({'test': {'a': 'z'}, 'another': {'123': '456'}},
+                         self.templater.get_templates())
+
 
 class TestTemplateInsertion(unittest.TestCase):
     def setUp(self):
