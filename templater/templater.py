@@ -4,20 +4,16 @@ import re
 
 class Templater:
     re_delimiters = re.compile('{{.+?}}')
-    __templates = dict()
 
     def __init__(self):
-        pass
-
-    def add_template(self, template_name: str, template: dict):
-        if self.__templates.get(template_name):
-            print(f'Template named {template_name} already exists.')
-            raise
-        self.__templates[template_name] = template
+        self.__templates = dict()
 
     def add_templates(self, templates: dict):
         for template_name, template in templates.items():
-            self.add_template(template_name, template)
+            if self.__templates.get(template_name):
+                print(self.__templates)
+                raise Exception(f'Template named {template_name} already exists.')
+            self.__templates[template_name] = template
 
     def get_templates(self):
         return self.__templates
@@ -47,4 +43,4 @@ class Templater:
         # Get template from templates dict
         t_group_name, t_name = identifier[2:-2].strip().split('.')
         t_group = self.__templates.get(t_group_name)
-        return t_group.get(t_name, '')
+        return t_group.get(t_name)
