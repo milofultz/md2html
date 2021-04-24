@@ -4,9 +4,19 @@ import re
 
 class Templater:
     re_delimiters = re.compile('{{.+?}}')
+    __templates = dict()
 
-    def __init__(self, templates: dict):
-        self.templates = templates
+    def __init__(self):
+        pass
+
+    def add_template(self, template_name: str, template: dict):
+        if self.__templates.get(template_name):
+            print(f'Template named {template_name} already exists.')
+            raise
+        self.__templates[template_name] = template
+
+    def get_templates(self):
+        return self.__templates
 
     def fill_template(self, text: str) -> str:
         """Replace the variables in the text with desired replacements.

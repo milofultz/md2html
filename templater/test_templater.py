@@ -2,6 +2,18 @@ import unittest
 from templater import Templater
 
 
+class TestAddTemplate(unittest.TestCase):
+    def setUp(self):
+        self.templater = Templater()
+
+    def test_add_new_template(self):
+        self.templater.add_template('test', {'a': 'z'})
+        self.assertEqual({'test': {'a': 'z'}}, self.templater.get_templates())
+
+    def test_templates_are_private(self):
+        with self.assertRaises(AttributeError):
+            self.templater.__templates
+
 class TestTemplateInsertion(unittest.TestCase):
     def setUp(self):
         self.templater = Templater()
