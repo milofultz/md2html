@@ -14,14 +14,14 @@ class TestAddTemplate(unittest.TestCase):
         with self.assertRaises(AttributeError):
             self.templater.__templates
 
+
 class TestTemplateInsertion(unittest.TestCase):
     def setUp(self):
         self.templater = Templater()
-        self.templater.add_template('test',
-                                    {'this': 'labradoodle',
-                                     'that': 'pug',
-                                     'header': '<header><strong>This is the top</strong></header>',
-                                     'site': 'http://www.example.com'})
+        self.templater.add_template('test', {'this': 'labradoodle',
+                                             'that': 'pug',
+                                             'header': '<header><strong>This is the top</strong></header>',
+                                             'site': 'http://www.example.com'})
 
     def test_replace_at_delimiters_blocks(self):
         self.assertEqual('labradoodle', self.templater.fill_template('{{ test.this }}'))

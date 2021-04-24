@@ -29,11 +29,18 @@ class Templater:
         for line in text.split('\n'):
             if len(templates := self.re_delimiters.findall(text)):
                 non_templates = self.re_delimiters.split(text)
-                for nt, t in zip_longest(non_templates, templates, fillvalue=''):
-                    t = t[2:-2].strip()  # {{ ... }}
-                    replacement = self.templates.get(t, '')
-                    output.append(nt + replacement)
+                for raw, template in zip_longest(non_templates, templates, fillvalue=''):
+                    filled_line = raw + self.get_template_replacement(template)
+                    output.append(filled_line)
             else:
                 output.append(line)
         return ''.join(output)
 
+    def get_template_replacement(self, identifier: str) -> str:
+        # if zip_longest gives us the default empty string
+        if identifier == '':
+            return ''
+        # Get template from templates dict
+        t_group_name, t_name = identifier[2:-2].strip().split('.')
+        t_group = self.__templates.get(t_group_name)
+        return t_group.get(t_name, '')
