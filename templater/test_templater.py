@@ -6,7 +6,8 @@ class TestTemplateInsertion(unittest.TestCase):
     def setUp(self):
         self.templater = Templater({'this': 'labradoodle',
                                     'that': 'pug',
-                                    'header': '<header><strong>This is the top</strong></header>'})
+                                    'header': '<header><strong>This is the top</strong></header>',
+                                    'site': 'http://www.example.com'})
 
     def test_replace_at_delimiters_blocks(self):
         self.assertEqual('labradoodle', self.templater.fill_template('{{ this }}'))
@@ -21,7 +22,11 @@ class TestTemplateInsertion(unittest.TestCase):
 
     def test_non_templates(self):
         self.assertEqual('{this is a normal one}, while { { this is not } }, and maybe {{ something without a proper close } }.',
-                         '{this is a normal one}, while { { this is not } }, and maybe {{ something without a proper close } }.')
+                         self.templater.fill_template('{this is a normal one}, while { { this is not } }, and maybe {{ something without a proper close } }.'))
+
+    def test_internal_links(self):
+        self.assertEqual('Check out my page at [http://www.example.com/thispage/index.html](my website).',
+                         self.templater.fill_template('Check out my page at [{{site}}/thispage/index.html](my website).'))
 
 
 if __name__ == '__main__':
