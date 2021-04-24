@@ -11,7 +11,8 @@ class Templater:
     def fill_template(self, text: str) -> str:
         """Replace the variables in the text with desired replacements.
 
-        :param text: text that contains the variables surrounded by delimitesr
+        :param text: text that may contain the variables surrounded by
+                     the delimitesr
         :return: A string with the variables replaced.
         """
         output = []
