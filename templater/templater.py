@@ -27,8 +27,10 @@ class Templater:
         :return: A string with the variables replaced.
         """
         if len(templates := self.re_delimiters.findall(text)):
+            # Make list of replaced words and non-replaced words
             templates = [self.get_template_replacement(t) for t in templates]
             non_templates = self.re_delimiters.split(text)
+            # Join them together
             filled_text = ''.join(f"{a}{b}" for a, b in zip_longest(non_templates, templates, fillvalue=''))
             return filled_text
         else:
