@@ -45,12 +45,4 @@ This is the part that takes in markdown and outputs valid HTML. README.html in t
 ## Future:
 
 - Add class to list with inputs to more easily remove list styles and remove padding/margin, etc.
-
-- Test against lines without empty lines between them. (e.g.
-
-```
-#Header
-Something
-- A list
-- ANother list item
-```
+- Footnotes? <https://support.typora.io/Markdown-Reference/#footnotes>
