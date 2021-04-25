@@ -22,7 +22,8 @@ class TestBuildPageWithFrontMatter(unittest.TestCase):
             
             ---
             
-            Some more stuff''')
+            Some more stuff
+            ---''')
 
     def test_get_front_matter_and_markdown(self):
         front_matter, markdown = self.page_builder.split_front_matter_and_markdown(self.example)
@@ -36,7 +37,22 @@ class TestBuildPageWithFrontMatter(unittest.TestCase):
             
             ---
             
-            Some more stuff'''), markdown)
+            Some more stuff
+            ---'''), markdown)
+
+    def test_no_front_matter(self):
+        no_front_matter = dedent('''\
+            # Header
+            
+            Some more stuff
+            
+            ---
+            
+            Some more stuff
+            ---''')
+        front_matter, markdown = self.page_builder.split_front_matter_and_markdown(no_front_matter)
+        self.assertEqual(None, front_matter)
+
 
     def test_add_front_matter_to_templates(self):
         # Pull in a string

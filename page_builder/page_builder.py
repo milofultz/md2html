@@ -19,10 +19,10 @@ class PageBuilder:
 
         return front_matter, markdown
 
-    def get_front_matter(self, file: str) -> str:
+    def get_front_matter(self, file: str) -> str or None:
         if file[:3] != '---':
             print(f'No front matter found in file: {file[0:100]} ...')
-            return ''
+            return None
         front_matter = self.re_front_matter.match(file).group()
         front_matter = front_matter.replace('---\n', '').strip()
         return front_matter
