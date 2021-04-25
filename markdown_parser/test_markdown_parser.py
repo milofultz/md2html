@@ -45,16 +45,21 @@ class TestMarkdownParserSingleLines(unittest.TestCase):
 
     def test_bold(self):
         self.assertEqual('<p><strong>The whole line</strong></p>', self.md_parser.parse('**The whole line**'))
+        self.assertEqual('<p><strong>The whole line</strong></p>', self.md_parser.parse('__The whole line__'))
 
     def test_bold_inline(self):
         self.assertEqual('<p>Somewhere in the <strong>middle</strong> of the line</p>', self.md_parser.parse('Somewhere in the **middle** of the line'))
+        self.assertEqual('<p>Somewhere in the <strong>middle</strong> of the line</p>', self.md_parser.parse('Somewhere in the __middle__ of the line'))
 
     def test_italic(self):
         self.assertEqual('<p><em>The whole line</em></p>', self.md_parser.parse('*The whole line*'))
+        self.assertEqual('<p><em>The whole line</em></p>', self.md_parser.parse('_The whole line_'))
 
     def test_italic_inline(self):
         self.assertEqual('<p>Somewhere in the <em>middle</em> of the line</p>',
                          self.md_parser.parse('Somewhere in the *middle* of the line'))
+        self.assertEqual('<p>Somewhere in the <em>middle</em> of the line</p>',
+                         self.md_parser.parse('Somewhere in the _middle_ of the line'))
 
     def test_strikethrough(self):
         self.assertEqual('<p><s>The whole line</s></p>', self.md_parser.parse('~~The whole line~~'))
@@ -106,6 +111,11 @@ class TestMarkdownParserBlocks(unittest.TestCase):
 
     def test_horizontal_rule(self):
         self.assertEqual('<hr>', self.md_parser.parse('---'))
+        self.assertEqual('<hr>', self.md_parser.parse('___'))
+        self.assertEqual('<hr>', self.md_parser.parse('==='))
+        self.assertEqual('<hr>', self.md_parser.parse('***'))
+        self.assertEqual('<hr>', self.md_parser.parse('---------------      '))
+        self.assertNotEqual('<hr>', self.md_parser.parse('====****----____   '))
 
     def test_code_block(self):
         md_code = dedent('''\

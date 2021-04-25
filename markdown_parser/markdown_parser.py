@@ -6,7 +6,7 @@ class MarkdownParser:
     elements = {
         # Whole line
         'header':               re.compile(r'^#+'),
-        'hr':                   re.compile(r'^--(-){1,}$'),
+        'hr':                   re.compile(r'^([-_=*])\1{2,}\s*$'),
         # Block
         'blockquote':           re.compile(r'^>(?!>).*'),  # match only one
         'code_block':           re.compile(r'^`{3}\w*$'),
@@ -15,8 +15,8 @@ class MarkdownParser:
         'ul':                   re.compile(r'^\s*[*-]\s'),
         'ol':                   re.compile(r'^\s*\d+\.\s'),
         # Inline
-        'strong':               re.compile(r'^\*\*'),
-        'em':                   re.compile(r'^\*(?!\*)'),
+        'strong':               re.compile(r'^((\*\*)|(__))'),
+        'em':                   re.compile(r'^((\*(?!\*))|(_(?!_)))'),
         'strikethrough':        re.compile(r'^~~'),
         'code':                 re.compile(r'^`(?!`)'),
         'code_triple':          re.compile(r'^`{3}'),
@@ -107,12 +107,12 @@ class MarkdownParser:
 
             if self.line_is('strong', line[i:]):
                 self.use_el('strong')
-                i += 1  # **
+                i += 1  # ** or __
             elif self.line_is('em', line[i:]):
                 self.use_el('em')
             elif self.line_is('strikethrough', line[i:]):
                 self.use_el('s')
-                i += 1  # **
+                i += 1  # ~~
             elif self.line_is('code_triple', line[i:]):
                 self.code_triple = True
                 self.use_el('code')
