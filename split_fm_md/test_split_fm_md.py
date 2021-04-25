@@ -1,7 +1,5 @@
 import unittest
 
-from templater.templater import Templater
-from markdown_parser.markdown_parser import MarkdownParser
 import split_fm_md
 
 from textwrap import dedent
@@ -27,7 +25,7 @@ class TestBuildPageWithFrontMatter(unittest.TestCase):
         front_matter, markdown = split_fm_md.split_page(self.example)
         self.assertEqual({'page': {'layout': 'post',
                                    'title': 'Blogging Like a Hacker'}},
-                         front_matter)
+                         {'page': front_matter})
         self.assertEqual(dedent('''\
             # Header
             

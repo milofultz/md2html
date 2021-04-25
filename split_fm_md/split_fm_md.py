@@ -24,7 +24,7 @@ def get_front_matter(file: str) -> dict or None:
         k, v = line.split(': ')
         parsed_front_matter[k.strip()] = v.strip()
 
-    return {'page': parsed_front_matter}
+    return parsed_front_matter
 
 
 def get_markdown(file: str) -> str:

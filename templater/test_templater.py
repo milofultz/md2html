@@ -1,6 +1,7 @@
 import unittest
 from templater import Templater
 from markdown_parser.markdown_parser import MarkdownParser
+from split_fm_md import split_fm_md
 
 from textwrap import dedent
 
@@ -94,21 +95,28 @@ class TestBuildPages(unittest.TestCase):
               <title>{{ page.title }}</title
               <meta name="description" content="{{page.description}}">
             </head>''')
-        page = self.md_parser.parse(dedent('''\
+        page = dedent('''\
+            ---
+            title: This is the inserted page title!
+            description: Some stuff about the page.
+            ---
             # {{ page.title }}
             
-            {{page.body}}
+            Contents of the post
             
-            *Something else*'''))
+            *Something else*''')
         footer = dedent('''\
             <footer>
               <strong>Copyright 2021 Some Guys</strong>
             </footer>''')
+        # Get front matter and markdown
+        page_template, markdown = split_fm_md.split_page(page)
+        # Parse markdown
+        parsed_markdown = self.md_parser.parse(markdown)
+        # Put front matter and markdown into templates
+        page_template['_html'] = parsed_markdown
         self.templater.add_templates({'head': {'_html': head},
-                                      'page': {'_html': page,
-                                               'title': 'This is the inserted page title!',
-                                               'description': 'Some stuff about the page.',
-                                               'body': 'Contents of the post'},
+                                      'page': page_template,
                                       'footer': {'_html': footer}})
         assembled_page = self.templater.fill_template(dedent('''\
             <!DOCTYPE html>
