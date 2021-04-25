@@ -20,10 +20,6 @@ class TestAddTemplate(unittest.TestCase):
         self.templater.add_templates(template)
         self.assertEqual(template, self.templater.get_templates())
 
-    def test_templates_are_private(self):
-        with self.assertRaises(AttributeError):
-            self.templater.__templates
-
 
 class TestTemplateInsertion(unittest.TestCase):
     templater = Templater()
