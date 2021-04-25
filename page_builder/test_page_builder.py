@@ -4,24 +4,39 @@ from templater.templater import Templater
 from markdown_parser.markdown_parser import MarkdownParser
 from page_builder import PageBuilder
 
+from textwrap import dedent
+
 
 class TestBuildPageWithFrontMatter(unittest.TestCase):
     def setUp(self):
-        self.templater = Templater()
-        self.md_parser = MarkdownParser()
-        # self.page_builder = PageBuilder()
+        self.page_builder = PageBuilder()
+        self.example = dedent('''\
+            ---
+            layout: post
+            title: Blogging Like a Hacker
+            ---
+            
+            # Header
+            
+            Some more stuff
+            
+            ---
+            
+            Some more stuff''')
 
-    def test_get_front_matter(self):
-        # Pull in a string
-        # separate only the front matter from the file without trailing space
-        # test that
-        pass
-
-    def test_get_markdown(self):
-        # Pull in a string
-        # separate only the markdown from the file without leading space
-        # test that
-        pass
+    def test_get_front_matter_and_markdown(self):
+        front_matter, markdown = self.page_builder.split_front_matter_and_markdown(self.example)
+        self.assertEqual(dedent('''\
+            layout: post
+            title: Blogging Like a Hacker'''), front_matter)
+        self.assertEqual(dedent('''\
+            # Header
+            
+            Some more stuff
+            
+            ---
+            
+            Some more stuff'''), markdown)
 
     def test_add_front_matter_to_templates(self):
         # Pull in a string
