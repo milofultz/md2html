@@ -56,7 +56,7 @@
 * [x] Parse markdown files to HTML
 * [x] Make basic template engine to take in dicts and fill templates
 * [ ] Create basic page builder out of templates and markdown files
-  * [ ] Separate front matter from markdown
-  * [ ] put front matter into {page} templates before parsing markdown
-  * [ ] Parse markdown
+  * [x] Separate front matter from markdown
+  * [x] put front matter into {page} templates before parsing markdown
+  * [x] Parse markdown
   * [ ] Run templater on main page template

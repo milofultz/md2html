@@ -10,13 +10,14 @@ class TestAddTemplate(unittest.TestCase):
         self.templater = Templater()
 
     def test_add_new_template(self):
-        self.templater.add_templates({'test': {'a': 'z'}})
-        self.assertEqual({'test': {'a': 'z'}}, self.templater.get_templates())
+        template = {'test': {'a': 'z'}}
+        self.templater.add_templates(template)
+        self.assertEqual(template, self.templater.get_templates())
 
     def test_add_multiple_templates(self):
-        self.templater.add_templates({'test': {'a': 'z'}, 'another': {'123': '456'}})
-        self.assertEqual({'test': {'a': 'z'}, 'another': {'123': '456'}},
-                         self.templater.get_templates())
+        template = {'test': {'a': 'z'}, 'another': {'123': '456'}}
+        self.templater.add_templates(template)
+        self.assertEqual(template, self.templater.get_templates())
 
     def test_templates_are_private(self):
         with self.assertRaises(AttributeError):
@@ -24,12 +25,11 @@ class TestAddTemplate(unittest.TestCase):
 
 
 class TestTemplateInsertion(unittest.TestCase):
-    def setUp(self):
-        self.templater = Templater()
-        self.templater.add_templates({'test': {'this': 'labradoodle',
-                                               'that': 'pug',
-                                               'header': '<header><strong>This is the top</strong></header>',
-                                               'site': 'http://www.example.com'}})
+    templater = Templater()
+    templater.add_templates({'test': {'this': 'labradoodle',
+                                      'that': 'pug',
+                                      'header': '<header><strong>This is the top</strong></header>',
+                                      'site': 'http://www.example.com'}})
 
     def test_replace_at_delimiters_blocks(self):
         self.assertEqual('labradoodle', self.templater.fill_template('{{ test.this }}'))
@@ -60,9 +60,10 @@ class TestTemplateInsertion(unittest.TestCase):
 
 
 class TestBuildPages(unittest.TestCase):
+    md_parser = MarkdownParser()
+
     def setUp(self):
         self.templater = Templater()
-        self.md_parser = MarkdownParser()
 
     def test_assemble_page(self):
         header = '<header>This is the header throughout the site</header>'
@@ -72,12 +73,12 @@ class TestBuildPages(unittest.TestCase):
             yeah wow this is markdown
             
             *Thing*'''))
-        self.templater.add_templates({'header': {'html': header},
-                                      'page': {'html': body}})
+        self.templater.add_templates({'header': {'_html': header},
+                                      'page': {'_html': body}})
         assembled_page = self.templater.fill_template(dedent('''\
-            {{ header.html }}
+            {{ header }}
             
-            {{ page.html }}'''))
+            {{ page }}'''))
         expected_page = dedent('''\
             <header>This is the header throughout the site</header>
             
@@ -88,25 +89,55 @@ class TestBuildPages(unittest.TestCase):
         self.assertEqual(expected_page, assembled_page)
 
     def test_assemble_nested_page(self):
-        header = '<header>{{ page.title }}</header>'
-        body = self.md_parser.parse(dedent('''\
+        head = dedent('''\
+            <head>
+              <title>{{ page.title }}</title
+              <meta name="description" content="{{page.description}}">
+            </head>''')
+        page = self.md_parser.parse(dedent('''\
             # {{ page.title }}
             
-            yeah wow this is markdown
+            {{page.body}}
             
-            *Thing*'''))
-        self.templater.add_templates({'header': {'html': header},
-                                      'page': {'html': body, 'title': 'This is the inserted page title!'}})
+            *Something else*'''))
+        footer = dedent('''\
+            <footer>
+              <strong>Copyright 2021 Some Guys</strong>
+            </footer>''')
+        self.templater.add_templates({'head': {'_html': head},
+                                      'page': {'_html': page,
+                                               'title': 'This is the inserted page title!',
+                                               'description': 'Some stuff about the page.',
+                                               'body': 'Contents of the post'},
+                                      'footer': {'_html': footer}})
         assembled_page = self.templater.fill_template(dedent('''\
-            {{ header.html }}
-
-            {{ page.html }}'''))
+            <!DOCTYPE html>
+            <html lang="en">
+              {{ head }}
+              <body>
+                {{ page }}
+              
+                {{footer}}
+              </body>
+            </html>'''))
+        # Does not maintain the indents above
         expected_page = dedent('''\
-            <header>This is the inserted page title!</header>
+            <!DOCTYPE html>
+            <html lang="en">
+              <head>
+              <title>This is the inserted page title!</title
+              <meta name="description" content="Some stuff about the page.">
+            </head>
+              <body>
+                <h1>This is the inserted page title!</h1>
+            <p>Contents of the post</p>
+            <p><em>Something else</em></p>
             
-            <h1>This is the inserted page title!</h1>
-            <p>yeah wow this is markdown</p>
-            <p><em>Thing</em></p>''')
+                <footer>
+              <strong>Copyright 2021 Some Guys</strong>
+            </footer>
+              </body>
+            </html>''')
 
         self.assertEqual(expected_page, assembled_page)
 
