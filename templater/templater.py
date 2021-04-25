@@ -9,32 +9,30 @@ class Templater:
         self.__templates = dict()
 
     def add_templates(self, templates: dict):
+        """Add templates to to be accessed by the engine.
+
+        :param templates: dict of dicts of k/v pairs
+        """
         for template_name, template in templates.items():
-            if self.__templates.get(template_name):
-                print(self.__templates)
-                raise Exception(f'Template named \'{template_name}\' already exists.')
             self.__templates[template_name] = template
 
-    def get_templates(self):
+    def get_templates(self) -> dict:
         return self.__templates
 
     def fill_template(self, text: str) -> str:
         """Replace the variables in the text with desired replacements.
 
         :param text: text that may contain the variables surrounded by
-                     the delimitesr
+                     the delimiter
         :return: A string with the variables replaced.
         """
-        output = []
-        for line in text.split('\n'):
-            if len(templates := self.re_delimiters.findall(text)):
-                non_templates = self.re_delimiters.split(text)
-                for raw, template in zip_longest(non_templates, templates, fillvalue=''):
-                    filled_line = raw + self.get_template_replacement(template)
-                    output.append(filled_line)
-            else:
-                output.append(line)
-        return ''.join(output)
+        if len(templates := self.re_delimiters.findall(text)):
+            templates = [self.get_template_replacement(t) for t in templates]
+            non_templates = self.re_delimiters.split(text)
+            filled_text = ''.join(f"{a}{b}" for a, b in zip_longest(non_templates, templates, fillvalue=''))
+            return filled_text
+        else:
+            return text
 
     def get_template_replacement(self, identifier: str) -> str:
         # if zip_longest gives us the default empty string
