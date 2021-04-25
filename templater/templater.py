@@ -32,7 +32,8 @@ class Templater:
             non_templates = self.re_delimiters.split(text)
             # Join them together
             filled_text = ''.join(f"{a}{b}" for a, b in zip_longest(non_templates, templates, fillvalue=''))
-            return filled_text
+            # Repeat the function until all templates are completely filled
+            return self.fill_template(filled_text)
         else:
             return text
 

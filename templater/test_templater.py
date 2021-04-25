@@ -1,5 +1,8 @@
 import unittest
 from templater import Templater
+from markdown_parser.markdown_parser import MarkdownParser
+
+from textwrap import dedent
 
 
 class TestAddTemplate(unittest.TestCase):
@@ -54,6 +57,58 @@ class TestTemplateInsertion(unittest.TestCase):
     def test_internal_links(self):
         self.assertEqual('Check out my page at [http://www.example.com/thispage/index.html](my website).',
                          self.templater.fill_template('Check out my page at [{{test.site}}/thispage/index.html](my website).'))
+
+
+class TestBuildPages(unittest.TestCase):
+    def setUp(self):
+        self.templater = Templater()
+        self.md_parser = MarkdownParser()
+
+    def test_assemble_page(self):
+        header = '<header>This is the header throughout the site</header>'
+        body = self.md_parser.parse(dedent('''\
+            # Some stuff
+
+            yeah wow this is markdown
+            
+            *Thing*'''))
+        self.templater.add_templates({'header': {'html': header},
+                                      'page': {'html': body}})
+        assembled_page = self.templater.fill_template(dedent('''\
+            {{ header.html }}
+            
+            {{ page.html }}'''))
+        expected_page = dedent('''\
+            <header>This is the header throughout the site</header>
+            
+            <h1>Some stuff</h1>
+            <p>yeah wow this is markdown</p>
+            <p><em>Thing</em></p>''')
+
+        self.assertEqual(expected_page, assembled_page)
+
+    def test_assemble_nested_page(self):
+        header = '<header>{{ page.title }}</header>'
+        body = self.md_parser.parse(dedent('''\
+            # {{ page.title }}
+            
+            yeah wow this is markdown
+            
+            *Thing*'''))
+        self.templater.add_templates({'header': {'html': header},
+                                      'page': {'html': body, 'title': 'This is the inserted page title!'}})
+        assembled_page = self.templater.fill_template(dedent('''\
+            {{ header.html }}
+
+            {{ page.html }}'''))
+        expected_page = dedent('''\
+            <header>This is the inserted page title!</header>
+            
+            <h1>This is the inserted page title!</h1>
+            <p>yeah wow this is markdown</p>
+            <p><em>Thing</em></p>''')
+
+        self.assertEqual(expected_page, assembled_page)
 
 
 if __name__ == '__main__':
