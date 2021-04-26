@@ -1,24 +1,29 @@
+import os
+import sys
+
 from markdown_parser.markdown_parser import MarkdownParser
+from templater.templater import Templater
+from split_fm_md import split_fm_md
 
-# I: markdown string (most of a file containing front matter and Jinja2 tamplates)
-# O: HTML file
-# C: no inline HTML
-#    Only using headers, bold, italic, links, images, lists, tables, code blocks, code inline
-# E: incomplete tag (e.g. **Hello!): throw error with line number and line contents
-#    incorrect formatting: throw error with line number and line contents
 
-# create output string
+def main():
+    # load all structures into template dict under _structures
+    # load all modules into template dict under _modules
+    # for each page in pages
+        # split front matter and markdown
+        # add front matter to template dict under _page
+        # parse markdown
+        # add parsed markdown to template dict under _page: _html
+        # fill structure template and all within recursively
+        # write to file in output folder
+    # exit on complete message
 
-def md_parser(markdown: str, template_fp: str):
-    # split markdown's front matter from body
 
-    # load header template
-    # create header with markdown's front matter
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        sys.exit('Please provide an input folder.')
+    # set input_fp to arg 1
+    # set output_fp to arg 2 if len(sys.argv) == 3 else arg 1
 
-    # set parsed_markdown to parsed markdown body
-
-    # load template
-
-    # insert parsed markdown into template
-
-    # export to file
+    # build the site
+    # success message

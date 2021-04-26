@@ -15,19 +15,18 @@
 ## Build a Site:
 
 * Invoke program with root folder
-  * load sitewide config into {site: {...}}
+  * load sitewide config into {'_site': {...}}
   * create site folder
   * load main page format (head, nav, page, footer, etc.)
-  * for each folder and root folder
-    * Create output folder
-    * create dict for page title, description, date, and path
-    * for each page
-      * create replacements for page
-      * Add title, description, date, path to folder index
-      * fill in main page with modules (recursively fills all)
-      * Export to HTML in output folder
-    * Create index for the current folder that lists all pages inside
-    * Export to current folder
+  * Create output folder
+  * create dict for page title, description, date, and path
+  * for each page in _pages folder
+    * create replacements for page
+    * Add title, description, date, path to folder index
+    * fill in main page with modules (recursively fills all)
+    * Export to HTML in output folder
+  * Create index for the current folder that lists all pages inside
+  * Export to root folder
   * Build RSS feed of all pages chronologically
   * Exit program
 
@@ -41,6 +40,6 @@
   * [x] Parse markdown
   * [x] Run templater on main page template
 * [ ] Make test run on single set of external files
-  * Main format template
+  * Main page template
   * Header and footer templates
   * 3 pages with front matter
