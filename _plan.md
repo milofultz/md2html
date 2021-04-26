@@ -12,44 +12,24 @@
 
 # Routes:
 
-## Build a page:
+## Build a Site:
 
-* invoke program with folder name
-  * load config file (site URL, settings, etc.)
-  * load all modules (header, footer, nav, etc.)
-  * create dict to hold all page info (title, description, location/folder, HTML)
-    * Should be used at the end with RSS generator and any TOC-style pages
-  * create dict for all folder info (name, path)
-    * use for nav links
-  * create dict for all module info (name, HTML)
-    * Once you have parsed a module once, you should not have to do it again
-  * prepare templater
-    * create templater instance
-    * add all templates to instance
-    * fill templates in all modules that are not page specific including meta HTML (DOCTYPE, HTML, head, etc.)
-  * parse markdown files
-    * for each file in root folder
-      * break out front matter and markdown
-      * Add front matter to page dict (date, title, desc, path, etc)
-      * fill out the rest of the module templates
-      * parse markdown file into HTML
-      * put modules and post together into finished HTML
-      * write to file in new folder
-      * add to front matter dict
-        * generate link using config
-        * populate with front matter
-      * build all meta files
-        * generate an index.html including all pages in current folder
-        * any special files (_about.md => about.html)
-          * prefaced by single underscore removes file from indexing in index.html 
-    * for each folder in markdown folder
-      * create new folder in output
-      * do the same as in the root folder
-  * Generate RSS feed
-    * Get all info from pages dict
-    * populate RSS feed template
-    * put in output folder
-* Success message
+* Invoke program with root folder
+  * load sitewide config into {site: {...}}
+  * create site folder
+  * load main page format (head, nav, page, footer, etc.)
+  * for each folder and root folder
+    * Create output folder
+    * create dict for page title, description, date, and path
+    * for each page
+      * create replacements for page
+      * Add title, description, date, path to folder index
+      * fill in main page with modules (recursively fills all)
+      * Export to HTML in output folder
+    * Create index for the current folder that lists all pages inside
+    * Export to current folder
+  * Build RSS feed of all pages chronologically
+  * Exit program
 
 ## Milestones
 
@@ -60,3 +40,7 @@
   * [x] put front matter into {page} templates before parsing markdown
   * [x] Parse markdown
   * [x] Run templater on main page template
+* [ ] Make test run on single set of external files
+  * Main format template
+  * Header and footer templates
+  * 3 pages with front matter

@@ -8,11 +8,11 @@ Organizing a site should be as easy as having your folder of pages and folder of
 
 I like making things. I'm currently using Jekyll and I like it a lot! But I really don't even need those features and want to sacrifice some of those capabilities of a "complex" website for ease of use, maintenance, and joy of making stuff. Think 2000 HTML.
 
-## Features
+## Features To Make
 
-* *Parse basic markdown to HTML* (in progress, see folder)
-* *Basic CSS styling to make generated HTML look good* (Essentially complete for the most basic markdown)
-* *Use templates for header/footer and navigation* (in progress))
+* Config to provide context to all generated pages (CSS, meta, etc.)
+* Generate RSS feed of all pages
+* ~~Parse basic markdown to HTML~~ (in progress, see folder)
+* ~~Basic CSS styling to make generated HTML look good~~ (Essentially complete for the most basic markdown)
+* ~~Use templates for header/footer and navigation~~ (in progress)
 * ~~Create pages from templates, consisting of parsed markdown and filled modules~~
-* ~~Config to provide context to all generated pages (CSS, meta, etc.)~~
-* ~~Generate RSS feed of all pages~~
