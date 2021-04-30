@@ -1,10 +1,35 @@
 :root {
+  --dark-blue-1: #0E74BF;
+  --dark-blue-2: #2E94DF;
+  --light-blue-1: #5EA3EC;
+  --light-blue-2: #7EC3FF;
+
   --black:  #222;
   --light-black: #333;
   --dark-gray: #6a6a6a;
   --light-gray: #9a9a9a;
   --dark-white: #e0e0e0;
   --white:  #f7f7f7;
+}
+
+:root {
+  --background: var(--white);
+  --background-off: var(--dark-white);
+  --text: var(--light-black);
+  --text-off: var(--dark-gray);
+  --anchor: var(--dark-blue-1);
+  --anchor-hover: var(--dark-blue-2);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: var(--black);
+    --background-off: var(--light-black);
+    --text: var(--dark-white);
+    --text-off: var(--light-gray);
+    --anchor: var(--light-blue-1);
+    --anchor-hover: var(--light-blue-2);
+  }
 }
 
 html {
@@ -14,18 +39,11 @@ html {
 }
 
 body {
-  background-color: var(--white);
-  color: var(--light-black);
+  background-color: var(--background);
+  color: var(--text);
   max-width: 50rem;
   margin: auto;
   padding: 2rem;
-}
-
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: var(--black);
-    color: var(--dark-white);
-  }
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -57,28 +75,18 @@ h6 {
 }
 
 a { 
-  color: #0E74BF; 
+  color: var(--anchor);
   text-decoration: none;
   transition: all .2s ease;
 }
 
 a:hover {
-  color: #2E94DF; 
-}
-
-@media (prefers-color-scheme: dark) {
-  a {
-    color: #5EA3EC;
-  }
-
-  a:hover {
-    color: #7EC3FF;
-  }
+  color: var(--anchor-hover);
 }
 
 code,
 pre {
-  background-color: var(--dark-white);
+  background-color: var(--background-off);
   border-radius: 4px;
   font-family: monospace;
   padding: 1rem;
@@ -93,19 +101,12 @@ pre {
   overflow: auto;
 }
 
-@media (prefers-color-scheme: dark) {
-  code,
-  pre {
-    background-color: var(--light-black);
-  }
-}
-
 input[type="checkbox"] {
   margin-left: -1rem;
 }
 
 blockquote {
-  color: var(--dark-gray);
+  color: var(--text-off);
   font-style: italic;
   line-height: 1.65;
   padding: 0.25rem 0;
@@ -113,21 +114,12 @@ blockquote {
 }
 
 blockquote::before {
-  border-left: 3px solid var(--dark-gray);
+  border-left: 3px solid var(--text-off);
   content: '';
   height: 100%;
   left: -1.25rem;
   position: absolute;
   top: 0;
-}
-
-@media (prefers-color-scheme: dark) {
-  blockquote {
-    color: var(--light-gray);
-  }
-  blockquote::before {
-    border-color: var(--light-gray);
-  }
 }
 
 img {
@@ -138,11 +130,5 @@ img {
 }
 
 hr {
-  color: var(--dark-gray);
-}
-
-@media (prefers-color-scheme: dark) {
-  hr {
-    color: var(--light-gray);
-  }
+  color: var(--text-off);
 }
