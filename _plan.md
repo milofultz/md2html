@@ -39,7 +39,10 @@
   * [x] put front matter into {page} templates before parsing markdown
   * [x] Parse markdown
   * [x] Run templater on main page template
-* [ ] Make test run on single set of external files
+* [x] Make test run on single set of external files
   * Main page template
   * Header and footer templates
   * 3 pages with front matter
+* [ ] Have any folder that is not underscored represent output folder
+* [ ] Add sitewide config 
+  * [ ] Set site
