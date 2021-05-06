@@ -16,7 +16,13 @@ def main(files_dir: str, output_dir: str):
     load_templates(os.path.join(files_dir, '_structures'), structures)
     load_templates(os.path.join(files_dir, '_modules'), modules)
 
+    pages_dir = os.path.join(files_dir, '_pages')
+    pages = os.listdir(pages_dir)
     # for each page in pages
+    for page in pages:
+        print(page)
+        with open(os.path.join(pages_dir, page), 'r') as f:
+            print(f.read())
         # split front matter and markdown
         # add front matter to template dict under _page
         # parse markdown
