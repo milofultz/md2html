@@ -13,22 +13,9 @@ pages = Templater()
 def main(files_dir: str, output_dir: str):
     # load all structures into template dict under _structures
 
-    structures_dir = os.path.join(files_dir, '_structures')
-    # if dir doesn't exist
-    if not os.path.isdir(structures_dir):
-        sys.exit('Input path does not exist or is not a directory.')
-    # for each file in subdirectory '_structures'
-    for file in os.listdir(structures_dir):
-        # with open the file as f
-        with open(os.path.join(structures_dir, file), 'r') as f:
-            # get the file contents and trim them
-            structure_name = file.rsplit('.', 1)[0]
-            structure = f.read().strip()
-            # load contents into structures: {filename (no ext): ...}}
-            structures.add_templates({structure_name: structure})
-    print(structures.get_templates())
+    load_templates(os.path.join(files_dir, '_structures'), structures)
+    load_templates(os.path.join(files_dir, '_modules'), modules)
 
-    # load all modules into template dict under _modules
     # for each page in pages
         # split front matter and markdown
         # add front matter to template dict under _page
@@ -37,6 +24,21 @@ def main(files_dir: str, output_dir: str):
         # fill structure template and all within recursively
         # write to file in output folder
     # exit on complete message
+
+
+def load_templates(dir_name: str, template_dict: Templater):
+    if not os.path.isdir(dir_name):
+        sys.exit('Input path does not exist or is not a directory.')
+    # for each file in subdirectory '_structures'
+    for file in os.listdir(dir_name):
+        # with open the file as f
+        with open(os.path.join(dir_name, file), 'r') as f:
+            # get the file contents and trim them
+            template_name = file.rsplit('.', 1)[0]
+            template = f.read().strip()
+            # load contents into templates: {filename (no ext): ...}}
+            template_dict.add_templates({template_name: template})
+    print(template_dict.get_templates())
 
 
 if __name__ == '__main__':
