@@ -10,6 +10,9 @@ md_parser = MarkdownParser()
 
 
 def main(files_dir: str, output_dir: str):
+    if not os.path.isdir(output_dir):
+        os.mkdir(output_dir)
+
     # load all structures into template dict under _structures
 
     load_templates(os.path.join(files_dir, '_structures'), 'structures')
@@ -32,6 +35,9 @@ def main(files_dir: str, output_dir: str):
         # fill structure template and all within recursively
         finished_page = templates.fill_structure(front_matter['structure'])
         # write to file in output folder
+        page_name = page.rsplit('.', 1)[0]
+        with open(os.path.join(output_dir, f'{page_name}.html'), 'w') as f:
+            f.write(finished_page)
     # exit on complete message
 
 
