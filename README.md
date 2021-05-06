@@ -8,6 +8,10 @@ Organizing a site should be as easy as having your folder of pages and folder of
 
 I like making things. I'm currently using Jekyll and I like it a lot! But I really don't even need those features and want to sacrifice some of those capabilities of a "complex" website for ease of use, maintenance, and joy of making stuff. Think 2000 HTML.
 
+## Milestones
+
+* 20210506 - Just built the first MVP of building pages. You can test it by downloading the repo and invoking `md2html.py ./_test ./_output`. Try changing elements of the `page` structure, the `footer` module, and the `pages` to see how it works.
+
 ## Features To Make
 
 * Config to provide context to all generated pages (CSS, meta, etc.)
