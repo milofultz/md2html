@@ -80,11 +80,11 @@ class TestBuildPages(unittest.TestCase):
             
             *Thing*'''))
         page_structure = dedent('''\
-            {{ _modules.header }}
+            {{ modules.header }}
             
             {{ page }}''')
-        self.templater.add_templates({'_structures': {'page': page_structure},
-                                      '_modules': {'header': header},
+        self.templater.add_templates({'structures': {'page': page_structure},
+                                      'modules': {'header': header},
                                       'page': {'_html': body}})
         assembled_page = self.templater.fill_structure('page')
         expected_page = dedent('''\
@@ -119,11 +119,11 @@ class TestBuildPages(unittest.TestCase):
         page_structure = dedent('''\
             <!DOCTYPE html>
             <html lang="en">
-              {{ _modules.head }}
+              {{ modules.head }}
               <body>
                 {{ page }}
               
-                {{_modules.footer}}
+                {{modules.footer}}
               </body>
             </html>''')
         # Get front matter and markdown
@@ -132,9 +132,9 @@ class TestBuildPages(unittest.TestCase):
         parsed_markdown = self.md_parser.parse(markdown)
         # Put front matter and markdown into templates
         page_template['_html'] = parsed_markdown
-        self.templater.add_templates({'_structures': {'page': page_structure},
-                                      '_modules': {'head': head,
-                                                   'footer': footer},
+        self.templater.add_templates({'structures': {'page': page_structure},
+                                      'modules': {'head': head,
+                                                  'footer': footer},
                                       'page': page_template})
         assembled_page = self.templater.fill_structure('page')
         # Does not maintain the indents above

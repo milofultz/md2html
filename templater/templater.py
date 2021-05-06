@@ -23,7 +23,7 @@ class Templater:
         return self.__templates
 
     def fill_structure(self, structure_name: str):
-        structure = self.__templates.get('_structures').get(structure_name)
+        structure = self.__templates.get('structures').get(structure_name)
         return self.fill(structure)
 
     def fill(self, text: str) -> str:

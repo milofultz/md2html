@@ -12,8 +12,8 @@ md_parser = MarkdownParser()
 def main(files_dir: str, output_dir: str):
     # load all structures into template dict under _structures
 
-    load_templates(os.path.join(files_dir, '_structures'), '_structures')
-    load_templates(os.path.join(files_dir, '_modules'), '_modules')
+    load_templates(os.path.join(files_dir, '_structures'), 'structures')
+    load_templates(os.path.join(files_dir, '_modules'), 'modules')
 
     pages_dir = os.path.join(files_dir, '_pages')
     pages = os.listdir(pages_dir)
