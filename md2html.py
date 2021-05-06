@@ -5,7 +5,10 @@ from markdown_parser.markdown_parser import MarkdownParser
 from templater.templater import Templater
 from split_fm_md import split_fm_md
 
-templates = Templater()
+structures = Templater()
+modules = Templater()
+pages = Templater()
+
 
 def main(files_dir: str, output_dir: str):
     # load all structures into template dict under _structures
@@ -19,8 +22,11 @@ def main(files_dir: str, output_dir: str):
         # with open the file as f
         with open(os.path.join(structures_dir, file), 'r') as f:
             # get the file contents and trim them
-            print(f.read())
-            # load contents into templates: {structures: {filename (no ext): ...}}
+            structure_name = file.rsplit('.', 1)[0]
+            structure = f.read().strip()
+            # load contents into structures: {filename (no ext): ...}}
+            structures.add_templates({structure_name: structure})
+    print(structures.get_templates())
 
     # load all modules into template dict under _modules
     # for each page in pages
