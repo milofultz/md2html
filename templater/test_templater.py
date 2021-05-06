@@ -79,12 +79,14 @@ class TestBuildPages(unittest.TestCase):
             yeah wow this is markdown
             
             *Thing*'''))
-        self.templater.add_templates({'header': {'_html': header},
-                                      'page': {'_html': body}})
-        assembled_page = self.templater.fill(dedent('''\
-            {{ header }}
+        page_structure = dedent('''\
+            {{ _modules.header }}
             
-            {{ page }}'''))
+            {{ page }}''')
+        self.templater.add_templates({'_structures': {'page': page_structure},
+                                      '_modules': {'header': header},
+                                      'page': {'_html': body}})
+        assembled_page = self.templater.fill_structure('page')
         expected_page = dedent('''\
             <header>This is the header throughout the site</header>
             
@@ -114,25 +116,27 @@ class TestBuildPages(unittest.TestCase):
             <footer>
               <strong>Copyright 2021 Some Guys</strong>
             </footer>''')
+        page_structure = dedent('''\
+            <!DOCTYPE html>
+            <html lang="en">
+              {{ _modules.head }}
+              <body>
+                {{ page }}
+              
+                {{_modules.footer}}
+              </body>
+            </html>''')
         # Get front matter and markdown
         page_template, markdown = split_fm_md.split_page(page)
         # Parse markdown
         parsed_markdown = self.md_parser.parse(markdown)
         # Put front matter and markdown into templates
         page_template['_html'] = parsed_markdown
-        self.templater.add_templates({'head': {'_html': head},
-                                      'page': page_template,
-                                      'footer': {'_html': footer}})
-        assembled_page = self.templater.fill(dedent('''\
-            <!DOCTYPE html>
-            <html lang="en">
-              {{ head }}
-              <body>
-                {{ page }}
-              
-                {{footer}}
-              </body>
-            </html>'''))
+        self.templater.add_templates({'_structures': {'page': page_structure},
+                                      '_modules': {'head': head,
+                                                   'footer': footer},
+                                      'page': page_template})
+        assembled_page = self.templater.fill_structure('page')
         # Does not maintain the indents above
         expected_page = dedent('''\
             <!DOCTYPE html>
