@@ -8,13 +8,16 @@ class Templater:
     def __init__(self):
         self.__templates = dict()
 
-    def add_templates(self, templates: dict):
+    def add_templates(self, *templates: dict):
         """Add templates to to be accessed by the engine.
 
-        :param templates: dict of dicts of k/v pairs
+        :param *templates: an undefined amount of dicts of dicts of k/v pairs
         """
-        for template_name, template in templates.items():
-            self.__templates[template_name] = template
+        for item in templates:
+            for template_name, template in item.items():
+                if not self.__templates.get(template_name):
+                    self.__templates[template_name] = dict()
+                self.__templates[template_name] |= template
 
     def get_templates(self) -> dict:
         return self.__templates

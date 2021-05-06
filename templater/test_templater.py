@@ -16,9 +16,19 @@ class TestAddTemplate(unittest.TestCase):
         self.assertEqual(template, self.templater.get_templates())
 
     def test_add_multiple_templates(self):
-        template = {'test': {'a': 'z'}, 'another': {'123': '456'}}
-        self.templater.add_templates(template)
-        self.assertEqual(template, self.templater.get_templates())
+        template1, template2 = {'test': {'a': 'z'}}, {'another': {'123': '456'}}
+        end_template = {'test': {'a': 'z'}, 'another': {'123': '456'}}
+        self.templater.add_templates(template1, template2)
+        self.assertEqual(end_template, self.templater.get_templates())
+
+    def test_insert_partial_template(self):
+        initial_template = {'test': {'a': 'z'}, 'another': {'123': '456'}}
+        new_template = {'test': {'b': 'y'}}
+        end_template = {'test': {'a': 'z', 'b': 'y'}, 'another': {'123': '456'}}
+        self.templater.add_templates(initial_template)
+        self.templater.add_templates(new_template)
+        self.assertEqual(end_template, self.templater.get_templates())
+
 
 
 class TestTemplateInsertion(unittest.TestCase):
