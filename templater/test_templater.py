@@ -30,7 +30,6 @@ class TestAddTemplate(unittest.TestCase):
         self.assertEqual(end_template, self.templater.get_templates())
 
 
-
 class TestTemplateInsertion(unittest.TestCase):
     templater = Templater()
     templater.add_templates({'test': {'this': 'labradoodle',
@@ -39,31 +38,31 @@ class TestTemplateInsertion(unittest.TestCase):
                                       'site': 'http://www.example.com'}})
 
     def test_replace_at_delimiters_blocks(self):
-        self.assertEqual('labradoodle', self.templater.fill_template('{{ test.this }}'))
-        self.assertEqual('pug', self.templater.fill_template('{{test.that}}'))
+        self.assertEqual('labradoodle', self.templater.fill('{{ test.this }}'))
+        self.assertEqual('pug', self.templater.fill('{{test.that}}'))
 
     def test_replace_at_delimiters_inline(self):
-        self.assertEqual('Replace labradoodle with a dog.', self.templater.fill_template('Replace {{ test.this }} with a dog.'))
-        self.assertEqual('pug is a dog, as well as labradoodle', self.templater.fill_template('{{test.that}} is a dog, as well as {{test.this}}'))
+        self.assertEqual('Replace labradoodle with a dog.', self.templater.fill('Replace {{ test.this }} with a dog.'))
+        self.assertEqual('pug is a dog, as well as labradoodle', self.templater.fill('{{test.that}} is a dog, as well as {{test.this}}'))
 
     def test_throw_on_missing_template_group(self):
         with self.assertRaises(Exception):
-            self.templater.fill_template('Replace {{ missing.this }} with a dog.')
+            self.templater.fill('Replace {{ missing.this }} with a dog.')
 
     def test_throw_on_missing_template_item(self):
         with self.assertRaises(Exception):
-            self.templater.fill_template('Replace {{ test.dogdog }} with a dog.')
+            self.templater.fill('Replace {{ test.dogdog }} with a dog.')
 
     def test_html_insertion(self):
-        self.assertEqual('<header><strong>This is the top</strong></header>', self.templater.fill_template('{{ test.header }}'))
+        self.assertEqual('<header><strong>This is the top</strong></header>', self.templater.fill('{{ test.header }}'))
 
     def test_non_templates(self):
         self.assertEqual('{this is a normal one}, while { { this is not } }, and maybe {{ something without a proper close } }.',
-                         self.templater.fill_template('{this is a normal one}, while { { this is not } }, and maybe {{ something without a proper close } }.'))
+                         self.templater.fill('{this is a normal one}, while { { this is not } }, and maybe {{ something without a proper close } }.'))
 
     def test_internal_links(self):
         self.assertEqual('Check out my page at [http://www.example.com/thispage/index.html](my website).',
-                         self.templater.fill_template('Check out my page at [{{test.site}}/thispage/index.html](my website).'))
+                         self.templater.fill('Check out my page at [{{test.site}}/thispage/index.html](my website).'))
 
 
 class TestBuildPages(unittest.TestCase):
@@ -82,7 +81,7 @@ class TestBuildPages(unittest.TestCase):
             *Thing*'''))
         self.templater.add_templates({'header': {'_html': header},
                                       'page': {'_html': body}})
-        assembled_page = self.templater.fill_template(dedent('''\
+        assembled_page = self.templater.fill(dedent('''\
             {{ header }}
             
             {{ page }}'''))
@@ -124,7 +123,7 @@ class TestBuildPages(unittest.TestCase):
         self.templater.add_templates({'head': {'_html': head},
                                       'page': page_template,
                                       'footer': {'_html': footer}})
-        assembled_page = self.templater.fill_template(dedent('''\
+        assembled_page = self.templater.fill(dedent('''\
             <!DOCTYPE html>
             <html lang="en">
               {{ head }}

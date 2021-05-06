@@ -22,7 +22,11 @@ class Templater:
     def get_templates(self) -> dict:
         return self.__templates
 
-    def fill_template(self, text: str) -> str:
+    def fill_structure(self, structure_name: str):
+        structure = self.__templates.get('_structures').get(structure_name)
+        return self.fill(structure)
+
+    def fill(self, text: str) -> str:
         """Replace the variables in the text with desired replacements.
 
         :param text: text that may contain the variables surrounded by
@@ -36,7 +40,7 @@ class Templater:
             # Join them together
             filled_text = ''.join(f"{a}{b}" for a, b in zip_longest(non_templates, templates, fillvalue=''))
             # Repeat the function until all templates are completely filled
-            return self.fill_template(filled_text)
+            return self.fill(filled_text)
         else:
             return text
 
