@@ -10,6 +10,7 @@ md_parser = MarkdownParser()
 
 CONFIG_FILE = 'config.ini'
 
+
 def main(files_dir: str, output_dir: str):
     print('\nSite build start...')
     if not os.path.isdir(output_dir):
@@ -51,7 +52,7 @@ def load_config(config: str):
             continue
         k, v = line.split(': ')
         config_vars[k] = v
-    templates.add_templates({'_site': config_vars})
+    templates.add_templates({'site': config_vars})
     print(templates.get_templates())
 
 
