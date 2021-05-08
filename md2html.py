@@ -24,11 +24,13 @@ def main(files_dir: str, output_dir: str):
     for folder in os.listdir(files_dir):
         if not os.path.isdir(os.path.join(files_dir, folder)):
             continue
-        # means it is private or not for this step
+        # All our directories are prefixed by a single underscore
         if folder[0:2] == '__' or folder[0] != '_':
             continue
+        # Needs to be done after all else is parsed
         elif folder == '_pages':
             pages_exist = True
+        # Folders that contain unparsed files
         elif folder == '_modules':
             load_templates(os.path.join(files_dir, folder), folder[1:], parsed=False)
         else:
