@@ -8,11 +8,16 @@ from split_fm_md import split_fm_md
 templates = Templater()
 md_parser = MarkdownParser()
 
+CONFIG_FILE = 'config.ini'
 
 def main(files_dir: str, output_dir: str):
     print('\nSite build start...')
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
+
+    # Load variables from config file into _site
+    with open(os.path.join(files_dir, CONFIG_FILE), 'r') as f:
+        load_config(f.read())
 
     pages_exist = False
 
@@ -35,6 +40,17 @@ def main(files_dir: str, output_dir: str):
     render_pages(os.path.join(files_dir, '_pages'), output_dir)
 
     print('\nSite build complete')
+
+
+def load_config(config: str):
+    config_vars = dict()
+    for line in config.split('\n'):
+        if not line:
+            continue
+        k, v = line.split(': ')
+        config_vars[k] = v
+    templates.add_templates({'_site': config_vars})
+    print(templates.get_templates())
 
 
 def load_templates(dir_name: str, template_group: str, parsed=True):

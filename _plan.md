@@ -43,6 +43,8 @@
   * Main page template
   * Header and footer templates
   * 3 pages with front matter
-* [ ] Have any folder that is not underscored represent output folder
+* [x] Have folders within _pages represent output folders
 * [ ] Add sitewide config 
-  * [ ] Set site
+  * Set site
+  * Set site title
+  * Set favicon?
