@@ -11,12 +11,14 @@ I like making things. I'm currently using Jekyll and I like it a lot! But I real
 ## Milestones
 
 * 20210506 - Just built the first MVP of building pages. You can test it by downloading the repo and invoking `md2html.py ./_test ./_output`. Try changing elements of the `page` structure, the `footer` module, and the `pages` to see how it works.
+* 20210508 - Can now generate a page using modules, use site variables from a config file, and inject custom CSS to all pages. 
 
 ## Features To Make
 
-* Config to provide context to all generated pages (CSS, meta, etc.)
+* ~~Config to provide context to all generated pages (CSS, meta, etc.)~~
+* Automatically generate index page for each folder of all enclosed files
 * Generate RSS feed of all pages
-* ~~Parse basic markdown to HTML~~ (in progress, see folder)
-* ~~Basic CSS styling to make generated HTML look good~~ (Essentially complete for the most basic markdown)
-* ~~Use templates for header/footer and navigation~~ (in progress)
+* ~~Parse basic markdown to HTML~~
+* ~~Basic CSS styling to make generated HTML look good~~
+* ~~Use templates for header/footer and navigation~~ (in progress, need to make navigation)
 * ~~Create pages from templates, consisting of parsed markdown and filled modules~~
