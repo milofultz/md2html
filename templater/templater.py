@@ -22,6 +22,10 @@ class Templater:
     def get_templates(self) -> dict:
         return self.__templates
 
+    def reset_template_group(self, key: str):
+        if self.__templates.get(key):
+            del self.__templates[key]
+
     def fill_structure(self, structure_name: str):
         structure = self.__templates.get('structures').get(structure_name)
         return self.fill(structure)
