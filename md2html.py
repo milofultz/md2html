@@ -48,7 +48,7 @@ def main(files_dir: str, output_dir: str):
 def load_config(config: str):
     config_vars = dict()
     for line in config.split('\n'):
-        if not line:
+        if not line or line[0] == '#':
             continue
         k, v = line.split(': ')
         config_vars[k] = v
