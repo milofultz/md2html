@@ -106,6 +106,18 @@ def render_pages(folder: str, output: str):
                 f.write(finished_page)
             print(f'''{os.path.join(subfolder, "_pages", page)}  ->  {output_path}''')
 
+        # Create index of all pages and folders in folder
+        enclosed_items = []
+        dir = os.path.join(folder, subfolder)
+        for enclosed_folder in os.listdir(dir):
+            print(enclosed_folder, os.path.isdir(os.path.join(dir, enclosed_folder)))
+            if not os.path.isdir(os.path.join(dir, enclosed_folder)):
+                continue
+            enclosed_folder_name = enclosed_folder.replace('_', ' ').capitalize()
+            enclosed_items.append(f'<a href="{enclosed_folder}/index.html">{enclosed_folder_name}</a>')
+        print(enclosed_items)
+
+
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
