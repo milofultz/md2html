@@ -18,7 +18,7 @@ def main(files_dir: str, output_dir: str):
 
     # Load variables from config file into _site
     with open(os.path.join(files_dir, CONFIG_FILE), 'r') as f:
-        load_config(f.read())
+        load_config(f.read(), files_dir)
 
     pages_exist = False
 
@@ -45,9 +45,9 @@ def main(files_dir: str, output_dir: str):
     print('\nSite build complete')
 
 
-def load_config(config: str):
+def load_config(config: str, files_dir: str):
     config_vars = dict()
-    # Set default CSS location
+    # Set default CSS location inside of _pages dir
     config_vars['css'] = 'style.css'
     for line in config.split('\n'):
         if not line or line[0] == '#':
@@ -57,7 +57,7 @@ def load_config(config: str):
             css = value
         config_vars[key] = value
     if os.path.isfile(config_vars['css']):
-        with open(config_vars['css'], 'r') as f:
+        with open(os.path.join(files_dir, config_vars['css']), 'r') as f:
             config_vars['css'] = f.read().replace('\n', '').replace(' ', '')
     templates.add_templates({'site': config_vars})
 
