@@ -51,3 +51,8 @@
 * [x] Make sexier way for local linking to work
   * if not offsite (https?://), smartly add `../` * levels deep
   * Test a cousin link
+* [ ] Make index page for each folder that will list all contents
+  * List title with description underneath truncated with overflow and ellipsis
+  * Standard unordered list
+  * Link to enclosed folders
+  * Folder names should be Capitalized Without Underscores (capitalized_without_underscores)
