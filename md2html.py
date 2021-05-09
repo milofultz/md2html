@@ -78,6 +78,9 @@ def render_pages(folder: str, output: str):
     # for each folder including root
     for subfolder, _, pages in os.walk(folder):
         subfolder = subfolder[len(folder) + 1:]
+        output_folder = os.path.join(output, subfolder) if subfolder != '' else os.path.join(output)
+        if not os.path.isdir(output_folder):
+            os.mkdir(output_folder)
         # Get depth by counting slashes + 1 if not an empty string (the root)
         # This will be appended to all internal links in the parsing process
         file_depth = 1 + len(''.join(slash for slash in subfolder if slash == '/')) if subfolder else 0
@@ -92,15 +95,7 @@ def render_pages(folder: str, output: str):
             finished_page = templates.fill_structure(front_matter['structure'])
 
             page_name = page.rsplit('.', 1)[0]
-            output_folder = os.path.join(output, subfolder)
-            if subfolder == '':
-                output_folder = os.path.join(output)
             output_path = os.path.join(output_folder, f'{page_name}.html')
-
-            try:
-                os.mkdir(output_folder)
-            except FileExistsError:
-                pass
 
             with open(output_path, 'w') as f:
                 f.write(finished_page)
