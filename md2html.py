@@ -89,14 +89,19 @@ def render_pages(folder: str, output: str):
         for page in pages:
             with open(os.path.join(folder, subfolder, page), 'r') as f:
                 raw_page = f.read()
+            # Get material from page
             front_matter, markdown = split_fm_md.split_page(raw_page)
             parsed_markdown = md_parser.parse(markdown, file_depth)
-            templates.add_templates({'page': {**front_matter, '_html': parsed_markdown}})
-            finished_page = templates.fill_structure(front_matter['structure'])
-
             page_name = page.rsplit('.', 1)[0]
             output_path = os.path.join(output_folder, f'{page_name}.html')
-
+            page_information = {**front_matter,
+                                '_html': parsed_markdown,
+                                'path': output_path,
+                                'page_name': page_name}
+            templates.add_templates({'page': page_information},
+                                    {output_folder: page_information})
+            # Fill templates with page info
+            finished_page = templates.fill_structure(front_matter['structure'])
             with open(output_path, 'w') as f:
                 f.write(finished_page)
             print(f'''{os.path.join(subfolder, "_pages", page)}  ->  {output_path}''')
