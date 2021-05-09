@@ -53,7 +53,6 @@ def load_config(config: str):
         k, v = line.split(': ')
         config_vars[k] = v
     templates.add_templates({'site': config_vars})
-    print(templates.get_templates())
 
 
 def load_templates(dir_name: str, template_group: str, parsed=True):
@@ -61,9 +60,9 @@ def load_templates(dir_name: str, template_group: str, parsed=True):
         sys.exit('Input path does not exist or is not a directory.')
     for file in os.listdir(dir_name):
         with open(os.path.join(dir_name, file), 'r') as f:
-            template_name = file.rsplit('.', 1)[0]
+            template_name, extension = file.rsplit('.', 1)
             template = f.read().strip()
-            if not parsed:
+            if not parsed and extension != 'html':
                 template = md_parser.parse(template)
             templates.add_templates({template_group: {template_name: template}})
 
