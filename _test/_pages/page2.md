@@ -5,7 +5,7 @@ structure: page
 ---
 
 The thing | that's cool
---- | ---
+:-: | ---
 ONe | Two
 Three | Four baby
 

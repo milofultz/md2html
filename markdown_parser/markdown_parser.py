@@ -24,7 +24,7 @@ class MarkdownParser:
         'link_simple':          re.compile(r'^<\S+\.\S+>'),
         'image':                re.compile(r'^!\[[^\[\]]+]\([^()]+\)$'),
         # Tables
-        'table_div':            re.compile(r'^---(\s\|\s---)+$'),
+        'table_div':            re.compile(r'^((---)|(:--)|(:-:)|(--:))(\s\|\s((---)|(:--)|(:-:)|(--:)))+$'),
         'table_row':            re.compile(r'^[^|]+((\s\|\s).+[^\s|])+$'),
 
         # Utilities
@@ -190,6 +190,12 @@ class MarkdownParser:
             self.use_el('tr')
             self.use_el('thead')
         elif self.line_is('table_div', line):
+            # ':--' Left align is default, do nothing
+            if (alignment := line[0:3]) == ':-:':
+                self.current_line = self.current_line.replace('<table>', '<table class="center">')
+                print(self.current_line)
+            elif alignment == '--:':
+                self.current_line = self.current_line.replace('<table>', '<table class="right">')
             self.use_el('tbody')
         else:
             self.use_el('tr')

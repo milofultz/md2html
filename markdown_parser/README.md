@@ -38,7 +38,7 @@ This is the part that takes in markdown and outputs valid HTML. README.html in t
 - Tables (with a header row only, minimal markdown)
   - cols always separated by ` | `
   - first line is headers
-  - second line is `---` followed by ` | ---` (rows - 1) times (e.g. 3 cols = `--- | --- | ---`)
+  - second line is `---`, `:-:`, `--:` for left, middle, right align of table respectively; followed by ` | ---` (rows - 1) times (e.g. 3 cols = `:-: | --- | ---`)
   - each subsequent line is a row 
   
 
