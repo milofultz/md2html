@@ -132,3 +132,11 @@ img {
 hr {
   color: var(--text-off);
 }
+
+.center {
+  text-align: center;
+}
+
+.right {
+  text-align: right;
+}
