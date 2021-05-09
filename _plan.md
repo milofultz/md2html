@@ -48,3 +48,5 @@
   * Set site
   * Set site title
   * Set CSS location (if not default)
+* [ ] Make sexier way for local linking to work
+  * if not offsite (https?://), smartly add `../` * levels deep
