@@ -50,3 +50,4 @@
   * Set CSS location (if not default)
 * [x] Make sexier way for local linking to work
   * if not offsite (https?://), smartly add `../` * levels deep
+  * Test a cousin link
