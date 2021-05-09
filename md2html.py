@@ -47,11 +47,18 @@ def main(files_dir: str, output_dir: str):
 
 def load_config(config: str):
     config_vars = dict()
+    # Set default CSS location
+    config_vars['css'] = 'style.css'
     for line in config.split('\n'):
         if not line or line[0] == '#':
             continue
-        k, v = line.split(': ')
-        config_vars[k] = v
+        key, value = line.split(': ')
+        if key == 'css':
+            css = value
+        config_vars[key] = value
+    if os.path.isfile(config_vars['css']):
+        with open(config_vars['css'], 'r') as f:
+            config_vars['css'] = f.read().replace('\n', '').replace(' ', '')
     templates.add_templates({'site': config_vars})
 
 

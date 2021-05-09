@@ -44,7 +44,7 @@
   * Header and footer templates
   * 3 pages with front matter
 * [x] Have folders within _pages represent output folders
-* [ ] Add sitewide config 
+* [x] Add sitewide config 
   * Set site
   * Set site title
-  * Set favicon?
+  * Set CSS location (if not default)
