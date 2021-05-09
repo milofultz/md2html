@@ -9,4 +9,4 @@ The thing | that's cool
 ONe | Two
 Three | Four baby
 
-<page3.html>
+<new/test.html>

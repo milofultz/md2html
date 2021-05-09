@@ -3,7 +3,7 @@ import sys
 
 
 class MarkdownParser:
-    elements = {
+    regex = {
         # Whole line
         'header':               re.compile(r'^#+'),
         'hr':                   re.compile(r'^([-_=*])\1{2,}\s*$'),
@@ -26,6 +26,9 @@ class MarkdownParser:
         # Tables
         'table_div':            re.compile(r'^---(\s\|\s---)+$'),
         'table_row':            re.compile(r'^[^|]+((\s\|\s).+[^\s|])+$'),
+
+        # Utilities
+        'internal_link':        re.compile(r'^(?!https?://).*$'),
     }
     list_indent_interval = 2
 
@@ -39,17 +42,18 @@ class MarkdownParser:
         self.pre = False
         self.pre_indent = False
         self.list_depth = 0
+        self.file_depth = 0
 
-    def parse(self, markdown):
+    def parse(self, markdown: str, file_depth: int = 0):
         # Set up vars
-        self.set_up()
+        self.set_up(file_depth)
 
         for line in markdown.split('\n'):
             self.parse_line(line)
         self.reset_element_stack()
         return '\n'.join(self.output)
 
-    def parse_line(self, line):
+    def parse_line(self, line: str):
         if self.pre:
             if self.line_is('code_block', line):
                 self.pre = False
@@ -132,10 +136,10 @@ class MarkdownParser:
             i += 1
 
     def line_is(self, element: str, line: str):
-        return self.elements[element].search(line)
+        return self.regex[element].search(line)
 
     def use_header(self, header: str):
-        level = str(self.elements['header'].search(header).span()[1])
+        level = str(self.regex['header'].search(header).span()[1])
         self.use_el(f'h{level}', {'_content': header.replace('#', '').lstrip()})
 
     def use_image(self, image: str):
@@ -144,14 +148,16 @@ class MarkdownParser:
 
     def get_link(self, line: str) -> str:
         link_type = 'link_simple' if line[0] == '<' else 'link'
-        return self.elements[link_type].search(line).group()
+        return self.regex[link_type].search(line).group()
 
     def use_link(self, link: str):
         if link[0] == '<':
-            self.use_el('a', {'href': link[1:-1], '_content': self.html_escape(link[1:-1])})  # < ... >
+            href = text = link[1:-1]
         else:
             text, href = link[1:-1].split('](')
-            self.use_el('a', {'href': href, '_content': self.html_escape(text)})
+        if self.line_is('internal_link', href):
+            href = self.file_depth * '../' + href
+        self.use_el('a', {'href': href, '_content': self.html_escape(text)})
 
     def use_checkbox(self, checkbox: str):
         options = {'type': 'checkbox', '_nothing': True}
@@ -229,7 +235,7 @@ class MarkdownParser:
 
         self.list_depth = current_indent
 
-        text = self.elements[list_type].split(li.lstrip())[1]
+        text = self.regex[list_type].split(li.lstrip())[1]
         self.use_el('li')
         self.parse_inline(text)
 
@@ -279,7 +285,7 @@ class MarkdownParser:
         self.element_stack.pop()
         return '</' + element + '>'
 
-    def set_up(self):
+    def set_up(self, file_depth: int):
         self.element_stack = ['ROOT']
         self.current_line = ''
         self.output = []
@@ -289,6 +295,7 @@ class MarkdownParser:
         self.pre = False
         self.pre_indent = False
         self.list_depth = 0
+        self.file_depth = file_depth
 
     def reset_element_stack(self):
         for element in reversed(self.element_stack):

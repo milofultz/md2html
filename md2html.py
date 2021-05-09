@@ -78,13 +78,16 @@ def render_pages(folder: str, output: str):
     # for each folder including root
     for subfolder, _, pages in os.walk(folder):
         subfolder = subfolder[len(folder) + 1:]
+        # Get depth by counting slashes + 1 if not an empty string (the root)
+        # This will be appended to all internal links in the parsing process
+        file_depth = 1 + len(''.join(slash for slash in subfolder if slash == '/')) if subfolder else 0
         print(f'''\nRendering pages in {"root" if subfolder == '' else f"'{subfolder}'"} folder...''')
 
         for page in pages:
             with open(os.path.join(folder, subfolder, page), 'r') as f:
                 raw_page = f.read()
             front_matter, markdown = split_fm_md.split_page(raw_page)
-            parsed_markdown = md_parser.parse(markdown)
+            parsed_markdown = md_parser.parse(markdown, file_depth)
             templates.add_templates({'page': {**front_matter, '_html': parsed_markdown}})
             finished_page = templates.fill_structure(front_matter['structure'])
 
