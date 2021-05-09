@@ -101,34 +101,43 @@ def render_pages(folder: str, output: str):
             finished_page = templates.fill_structure(front_matter['structure'])
             with open(output_path, 'w') as f:
                 f.write(finished_page)
+            templates.reset_template_group('page')
             print(f'''{os.path.join(subfolder, "_pages", page)}  ->  {output_path}''')
 
         # Create index of all pages and folders in folder
-        # create_index()
-        enclosed_folders = []
-        current_dir = os.path.join(folder, subfolder)
-        for enclosed_folder in os.listdir(current_dir):
-            if not os.path.isdir(os.path.join(current_dir, enclosed_folder)):
-                continue
-            enclosed_folder_name = enclosed_folder.replace('_', ' ')
-            if enclosed_folder_name.islower():
-                enclosed_folder_name = enclosed_folder_name.title()
-            enclosed_folders.append(f'<p><a href="{enclosed_folder}/index.html" class="folder">{enclosed_folder_name}</a></p>')
-        enclosed_files = []
-        for page_name, info in templates.get_templates()['index'].items():
-            print(page_name, info)
-            enclosed_files.append(f'''<p><a href="{page_name}.html">{info['title']}</a><br>{info['description']}</p>''')
-        enclosed_folders.sort()
-        enclosed_files.sort()
-        all_items = enclosed_folders + enclosed_files
-        # Make ul of all items and add to templates in index._html
-        index_html = '<ul><li>' + '</li><li>'.join(item for item in all_items) + '</li></ul>'
-        templates.add_templates({'index': {'_html': index_html}})
-        # Make index file out of structure and insert list into spot
-        finished_index = templates.fill_structure('index')
-        with open(os.path.join(output_folder, 'index.html'), 'w') as f:
-            f.write(finished_index)
-        templates.reset_template_group('index')
+        create_index(os.path.join(folder, subfolder), output_folder)
+
+
+def create_index(current_dir: str, output_folder: str):
+    # Make list of all enclosed folders
+    enclosed_folders = []
+    for enclosed_folder in os.listdir(current_dir):
+        if not os.path.isdir(os.path.join(current_dir, enclosed_folder)):
+            continue
+        enclosed_folder_name = enclosed_folder.replace('_', ' ')
+        if enclosed_folder_name.islower():
+            enclosed_folder_name = enclosed_folder_name.title()
+        enclosed_folders.append(f'<p><a href="{enclosed_folder}/index.html" class="folder">{enclosed_folder_name}</a></p>')
+
+    # Make list of all enclosed files
+    enclosed_files = []
+    for page_name, info in templates.get_templates()['index'].items():
+        enclosed_files.append(f'''<p><a href="{page_name}.html">{info['title']}</a><br>{info['description']}</p>''')
+
+    # Sort them and concat
+    enclosed_folders.sort()
+    enclosed_files.sort()
+    all_items = enclosed_folders + enclosed_files
+
+    # Make ul of all items and add to templates in index._html
+    index_html = '<ul><li>' + '</li><li>'.join(item for item in all_items) + '</li></ul>'
+    templates.add_templates({'index': {'_html': index_html}})
+
+    # Make index file out of structure and insert list into spot
+    finished_index = templates.fill_structure('index')
+    with open(os.path.join(output_folder, 'index.html'), 'w') as f:
+        f.write(finished_index)
+    templates.reset_template_group('index')
 
 
 if __name__ == '__main__':

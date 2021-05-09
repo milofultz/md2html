@@ -60,12 +60,12 @@ class Templater:
 
         group = self.__templates.get(group_name)
         if not group:
-            raise Exception(f'Template group not found at \'{reference}\'.')
-        if not (replacement := group.get(replacement_name)):
-            # If there is no page var found at replacement_name
+            # If there is no page var found in group
             if group_name == 'page':
                 # get the site var instead
                 return self.__templates.get('site').get(replacement_name)
             else:
-                raise Exception(f'Template item not found at \'{reference}\'.')
+                raise Exception(f'Template group not found at \'{reference}\'.')
+        if not (replacement := group.get(replacement_name)):
+            raise Exception(f'Template item not found at \'{reference}\'.')
         return replacement

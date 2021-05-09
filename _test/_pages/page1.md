@@ -4,7 +4,7 @@ description: Some stuff about page 1.
 structure: page
 ---
 
-Welcome to {{site.name}}!
+Welcome to {{site.title}}!
 
 Lorem ipsum dolor sit amet.
 
