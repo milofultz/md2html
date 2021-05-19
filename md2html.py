@@ -122,12 +122,12 @@ def create_index(current_dir: str, output_folder: str):
         enclosed_folder_name = enclosed_folder.replace('_', ' ')
         if enclosed_folder_name.islower():
             enclosed_folder_name = enclosed_folder_name.title()
-        enclosed_folders.append(f'<p><a href="{enclosed_folder}/index.html" class="folder">{enclosed_folder_name}</a></p>')
+        enclosed_folders.append(f'<a href="{enclosed_folder}/index.html" class="index__folder">{enclosed_folder_name}</a>')
 
     # Make list of all enclosed files
     enclosed_files = []
     for page_name, info in templates.get_templates()['index'].items():
-        enclosed_files.append(f'''<p><a href="{page_name}.html">{info['title']}</a><br>{info['description']}</p>''')
+        enclosed_files.append(f'''<a href="{page_name}.html" class="index__title">{info['title']}</a><br><span class="index__description">{info['description']}''')
 
     # Sort them and concat
     enclosed_folders.sort()
