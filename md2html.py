@@ -75,6 +75,9 @@ def load_templates(dir_name: str, template_group: str, parsed=True):
 
 
 def render_pages(folder: str, output: str):
+    # get ignore files
+    files_to_ignore = [filename for filename in templates.get_templates().get('site').get('ignore').split(',')]
+
     # for each folder including root
     for subfolder, _, pages in os.walk(folder):
         subfolder = subfolder[len(folder) + 1:]
@@ -87,6 +90,8 @@ def render_pages(folder: str, output: str):
         print(f'''\nRendering pages in {"root" if subfolder == '' else f"'{subfolder}'"} folder...''')
 
         for page in pages:
+            if page in files_to_ignore:
+                continue
             with open(os.path.join(folder, subfolder, page), 'r') as f:
                 raw_page = f.read()
             # Get material from page
