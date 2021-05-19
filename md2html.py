@@ -48,17 +48,19 @@ def main(files_dir: str, output_dir: str):
 def load_config(config: str, files_dir: str):
     config_vars = dict()
     # Set default CSS location inside of _pages dir
-    config_vars['css'] = 'style.css'
+    config_vars['css'] = os.path.join('style.css')
     for line in config.split('\n'):
         if not line or line[0] == '#':
             continue
         key, value = line.split(': ')
-        if key == 'css':
-            css = value
         config_vars[key] = value
-    if os.path.isfile(config_vars['css']):
-        with open(os.path.join(files_dir, config_vars['css']), 'r') as f:
-            config_vars['css'] = f.read().replace('\n', '').replace(' ', '')
+
+    css_file = os.path.join(files_dir, *os.path.split(config_vars['css']))
+    if not os.path.isfile(css_file):
+        sys.exit(f'CSS file not found at \'{css_file}\'.')
+    with open(css_file, 'r') as f:
+        config_vars['css'] = f.read().replace('\n', '').replace(' ', '')
+
     templates.add_templates({'site': config_vars})
 
 
