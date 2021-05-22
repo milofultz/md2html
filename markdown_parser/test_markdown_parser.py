@@ -98,6 +98,8 @@ class TestMarkdownParserSingleLines(unittest.TestCase):
     def test_link_simple_inline(self):
         self.assertEqual('<p>Somewhere in the <a href="http://www.example.com">http://www.example.com</a> of the line</p>',
                          self.md_parser.parse('Somewhere in the <http://www.example.com> of the line'))
+        self.assertEqual('<p><a href="cousin_folder/faraway.html">cousin_folder/faraway.html</a></p>',
+                         self.md_parser.parse('<cousin_folder/faraway.html>'))
 
     def test_image(self):
         # Won't do inline images, only as whole line

@@ -56,4 +56,5 @@
   * Standard unordered list
   * Link to enclosed folders
   * Folder names should be Capitalized Without Underscores (capitalized_without_underscores)
-* [ ] Include link to parent folder at top of each page and index
+* [x] Include link to parent folder at top of each page and index
+* [ ] Fix markdown parsing issue of closing inline tags 

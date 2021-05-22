@@ -9,4 +9,4 @@ This would be cool if it *worked*.
     The void
     Wow
 
-<cousin/faraway.html>
+<cousin_folder/faraway.html>

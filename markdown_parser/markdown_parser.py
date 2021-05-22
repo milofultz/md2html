@@ -109,6 +109,11 @@ class MarkdownParser:
                 i += 1
                 continue
 
+            # All of these need a way to check if a closing block exists.
+            # It is currently triggering even if no closing tags exist, like
+            # when there is an underscore in a link. If anyone ever uses an
+            # asterisk or underscore, it will trigger an em, which is not the
+            # intended way to go.
             if self.line_is('strong', line[i:]):
                 self.use_el('strong')
                 i += 1  # ** or __
