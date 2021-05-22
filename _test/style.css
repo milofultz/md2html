@@ -141,3 +141,28 @@ hr {
 .right {
   text-align: right;
 }
+
+/* Index Styles */
+
+.parent {
+  font-size: 2rem;
+}
+li {
+  padding-left: 0.5rem;
+}
+.folder {
+  list-style-type: '📁';
+}
+.folder + .page {
+  margin-top: 1rem;
+}
+.page {
+  list-style-type: '📄';
+}
+
+/* Instance Specific */
+
+header {
+  border-bottom: 2px solid var(--text-off);
+}
+

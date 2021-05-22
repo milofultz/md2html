@@ -59,7 +59,7 @@ def load_config(config: str, files_dir: str):
     if not os.path.isfile(css_file):
         sys.exit(f'CSS file not found at \'{css_file}\'.')
     with open(css_file, 'r') as f:
-        config_vars['css'] = f.read().replace('\n', '').replace(' ', '')
+        config_vars['css'] = f.read().replace('\n', '')
 
     templates.add_templates({'site': config_vars})
 
@@ -118,7 +118,8 @@ def render_pages(folder: str, output: str):
 def create_index(subfolder: str, current_dir: str, output_folder: str):
     index_html = ''
     if subfolder:
-        index_html += '<a href="../index.html" class="index__parent">⬆</a>'
+        print(subfolder)
+        index_html += '<a href="../index.html" class="parent">⬆</a>'
 
     # Make list of all enclosed folders
     enclosed_folders = []
@@ -138,10 +139,14 @@ def create_index(subfolder: str, current_dir: str, output_folder: str):
     # Sort them and concat
     enclosed_folders.sort()
     enclosed_files.sort()
-    all_items = enclosed_folders + enclosed_files
 
     # Make ul of all items and add to templates in index._html
-    index_html += '<ul><li>' + '</li><li>'.join(item for item in all_items) + '</li></ul>'
+    index_html += '<ul>'
+    if enclosed_folders:
+        index_html += '<li class="folder">' + '</li><li class="folder">'.join(item for item in enclosed_folders) + '</li>'
+    if enclosed_files:
+        index_html += '<li class="page">' + '</li><li class="page">'.join(item for item in enclosed_files) + '</li>'
+    index_html += '</ul>'
     templates.add_templates({'index': {'_html': index_html}})
 
     # Make index file out of structure and insert list into spot
