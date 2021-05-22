@@ -23,3 +23,4 @@ I like making things. I'm currently using Jekyll and I like it a lot! But I real
 * ~~Basic CSS styling to make generated HTML look good~~
 * ~~Use templates for header/footer and navigation~~ (in progress, need to make navigation)
 * ~~Create pages from templates, consisting of parsed markdown and filled modules~~
+* Wiki style links with a simple markup in the markdown file (e.g. `{term}` a la 100r, or `{[term]}`). `{x y z}` would link to the file within the same folder named `x_y_z.html`. 

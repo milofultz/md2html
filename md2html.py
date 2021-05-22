@@ -88,7 +88,7 @@ def render_pages(folder: str, output: str):
             os.mkdir(output_folder)
         # Get depth by counting slashes + 1 if not an empty string (the root)
         # This will be appended to all internal links in the parsing process
-        file_depth = 1 + len(''.join(slash for slash in subfolder if slash == '/')) if subfolder else 0
+        file_depth = 1 + len(''.join(slash for slash in subfolder if slash == os.sep)) if subfolder else 0
         print(f'''\nRendering pages in {"root" if subfolder == '' else f"'{subfolder}'"} folder...''')
 
         for page in pages:
@@ -112,10 +112,14 @@ def render_pages(folder: str, output: str):
             print(f'''{os.path.join(subfolder, "_pages", page)}  ->  {output_path}''')
 
         # Create index of all pages and folders in folder
-        create_index(os.path.join(folder, subfolder), output_folder)
+        create_index(subfolder, os.path.join(folder, subfolder), output_folder)
 
 
-def create_index(current_dir: str, output_folder: str):
+def create_index(subfolder: str, current_dir: str, output_folder: str):
+    index_html = ''
+    if subfolder:
+        index_html += '<a href="../index.html" class="index__parent">⬆</a>'
+
     # Make list of all enclosed folders
     enclosed_folders = []
     for enclosed_folder in os.listdir(current_dir):
@@ -137,7 +141,7 @@ def create_index(current_dir: str, output_folder: str):
     all_items = enclosed_folders + enclosed_files
 
     # Make ul of all items and add to templates in index._html
-    index_html = '<ul><li>' + '</li><li>'.join(item for item in all_items) + '</li></ul>'
+    index_html += '<ul><li>' + '</li><li>'.join(item for item in all_items) + '</li></ul>'
     templates.add_templates({'index': {'_html': index_html}})
 
     # Make index file out of structure and insert list into spot
